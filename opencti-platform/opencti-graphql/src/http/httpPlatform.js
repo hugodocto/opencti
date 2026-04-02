@@ -38,6 +38,8 @@ import { CERT_PROVIDER } from '../modules/authenticationProvider/provider-cert';
 import { HEADERS_PROVIDER } from '../modules/authenticationProvider/provider-headers';
 import { AuthenticationProviderError } from '../modules/authenticationProvider/providers-logger';
 
+const publicDir = DEV_MODE ? '../../opencti-front/dist' : '../public';
+
 export const sanitizeReferer = (refererToSanitize) => {
   // NOTE: basePath will be configured, if the site is hosted behind a reverseProxy otherwise '/' should be accurate
   // Ternary Operator (?): Defaults if basePath is undefined, null, "" (empty string), 0, etc (falsy values).
@@ -167,7 +169,10 @@ const createApp = async (app, schema) => {
     app.use(`${basePath}/static/flags`, express.static('static/flags'));
 
     // -- Serv frontend static resources
-    app.use(`${basePath}/static`, express.static(path.join(__dirname, '../public/static')));
+    app.use(`${basePath}/static`, express.static(path.join(__dirname, `${publicDir}/static`)));
+
+    // -- Serv frontend assets resources
+    app.use(`${basePath}/assets`, express.static(path.join(__dirname, `${publicDir}/assets`)));
   }
 
   const requestSizeLimit = nconf.get('app:max_payload_body_size') || '50mb';
@@ -553,7 +558,7 @@ const createApp = async (app, schema) => {
     if (ENABLED_UI) {
       const context = executionContext('app_loading');
       const settings = await getEntityFromCache(context, SYSTEM_USER, ENTITY_TYPE_SETTINGS);
-      const data = await readFile(`${__dirname}/../public/index.html`, 'utf8');
+      const data = await readFile(`${__dirname}/${publicDir}/index.html`, 'utf8');
       const settingsTitle = settings?.platform_title;
       const description = 'OpenCTI is an open source platform allowing organizations'
         + ' to manage their cyber threat intelligence knowledge and observables.';
