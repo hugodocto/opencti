@@ -1,6 +1,5 @@
 import path from 'path';
 import { pathToFileURL } from 'url';
-import axios from 'axios';
 import { chromium } from '@playwright/test';
 
 const fs = require('fs');
@@ -169,9 +168,19 @@ export default async (reportData) => {
     }],
   };
 
-  await axios.post(url, data).catch((err) => {
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      console.log(`Failed to post message: ${res.status}`);
+      console.log('[teams] failed to post message to Teams channel');
+    }
+  } catch (err) {
     // console.log(err);
     console.log(err.message);
     console.log('[teams] failed to post message to Teams channel');
-  });
+  }
 };
