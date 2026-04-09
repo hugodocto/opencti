@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { Readable } from 'node:stream';
 import type Express from 'express';
 import nconf from 'nconf';
 import { createAuthenticatedContext } from './httpAuthenticatedContext';
@@ -100,25 +100,30 @@ export const postChatbotSession = async (req: Express.Request, res: Express.Resp
 
     const url = `${XTM_ONE_URL}/api/v1/platform/chat/sessions`;
     const jwt = await issueAuthenticationJWT(context.user);
-    const response = await axios.post(url, req.body, {
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
       },
-      timeout: 15000,
+      body: JSON.stringify(req.body),
+      signal: AbortSignal.timeout(15000),
     });
 
-    res.json(response.data);
+    if (!response.ok) {
+      const { message: errMsg } = new Error(`Request failed with status ${response.status}`);
+      setCookieError(res, errMsg);
+      res.status(response.status).send({ status: response.status, error: errMsg });
+      return;
+    }
+
+    const data = await response.json();
+    res.json(data);
   } catch (e: unknown) {
     logApp.error('Error in chatbot session', { cause: e });
     const { message } = e as Error;
-    if (axios.isAxiosError(e) && e.response) {
-      setCookieError(res, message);
-      res.status(e.response.status).send({ status: e.response.status, error: message });
-    } else {
-      setCookieError(res, message);
-      res.status(503).send({ status: 503, error: message });
-    }
+    setCookieError(res, message);
+    res.status(503).send({ status: 503, error: message });
   }
 };
 
@@ -138,7 +143,8 @@ export const postChatbotMessage = async (req: Express.Request, res: Express.Resp
     const url = `${XTM_ONE_URL}/api/v1/platform/chat/messages`;
 
     const jwt = await issueAuthenticationJWT(context.user);
-    const response = await axios.post(url, req.body, {
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
@@ -146,65 +152,19 @@ export const postChatbotMessage = async (req: Express.Request, res: Express.Resp
         'X-Platform-Product': 'opencti',
         'X-Platform-Version': PLATFORM_VERSION,
       },
-      responseType: 'stream',
-      decompress: false,
-      timeout: 0,
+      body: JSON.stringify(req.body),
     });
 
-    // Set SSE headers
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('X-Accel-Buffering', 'no');
-    res.setHeader('Transfer-Encoding', 'chunked');
+    if (!response.ok) {
+      const code = response.status;
+      const { message } = new Error(`Request failed with status ${code}`);
 
-    // Pipe the response stream directly to client
-    response.data.pipe(res);
-
-    req.on('close', () => {
-      response.data.destroy();
-    });
-
-    response.data.on('error', (error: Error) => {
-      logApp.error('Stream error in chatbot proxy', { cause: error });
-      if (!res.headersSent) {
-        const { message } = error;
-        res.status(500).send({ status: 'error', error: message });
-      } else {
-        res.end();
-      }
-    });
-  } catch (e: unknown) {
-    logApp.error('Error in chatbot proxy', { cause: e });
-    const { message } = e as Error;
-
-    if (axios.isAxiosError(e) && e.response) {
-      const code = e.response.status;
-
-      // For streaming responses, e.response.data may be a stream, not parsed JSON.
-      // Try to extract the detail from the response body.
       let detail = message;
       try {
-        if (typeof e.response.data === 'object' && e.response.data !== null) {
-          if ('detail' in e.response.data) {
-            detail = e.response.data.detail;
-          } else if (typeof e.response.data.pipe === 'function') {
-            // It's a stream — read the buffer
-            const chunks: Buffer[] = [];
-            for await (const chunk of e.response.data) {
-              chunks.push(Buffer.from(chunk));
-            }
-            const body = JSON.parse(Buffer.concat(chunks).toString('utf-8'));
-            detail = body.detail ?? message;
-          }
-        }
-      } catch {
-        // If parsing fails, fall back to the error message
-      }
+        const body = await response.json() as { detail: string };
+        detail = body.detail ?? message;
+      } catch { /* fall back to generic message */ }
 
-      // Return errors as SSE stream so the chatbot displays
-      // the message instead of crashing with a generic error.
       setCookieError(res, message);
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -217,10 +177,39 @@ export const postChatbotMessage = async (req: Express.Request, res: Express.Resp
 
       res.write(`data: ${JSON.stringify({ type: 'error', content: errorContent, code })}\n\n`);
       res.end();
-    } else {
-      setCookieError(res, message);
-      res.status(503).send({ status: 503, error: message });
+      return;
     }
+
+    // Set SSE headers
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    // Pipe the response stream directly to client
+    const nodeStream = response.body ? Readable.fromWeb(response.body as any) : Readable.from([]);
+    nodeStream.pipe(res);
+
+    req.on('close', () => {
+      nodeStream.destroy();
+    });
+
+    nodeStream.on('error', (error: Error) => {
+      logApp.error('Stream error in chatbot proxy', { cause: error });
+      if (!res.headersSent) {
+        const { message: errMessage } = error;
+        res.status(500).send({ status: 'error', error: errMessage });
+      } else {
+        res.end();
+      }
+    });
+  } catch (e: unknown) {
+    logApp.error('Error in chatbot proxy', { cause: e });
+    const { message } = e as Error;
+    setCookieError(res, message);
+    res.status(503).send({ status: 503, error: message });
   }
 };
 
@@ -242,11 +231,8 @@ export const postAgentMessage = async (req: Express.Request, res: Express.Respon
 
     const url = `${XTM_ONE_URL}/api/v1/platform/chat/messages`;
     const jwt = await issueAuthenticationJWT(context.user);
-    const response = await axios.post(url, {
-      agent_slug,
-      content,
-      stream: false,
-    }, {
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
@@ -254,22 +240,32 @@ export const postAgentMessage = async (req: Express.Request, res: Express.Respon
         'X-Platform-Product': 'opencti',
         'X-Platform-Version': PLATFORM_VERSION,
       },
-      timeout: 120000, // 2 min for non-streaming agent response
+      body: JSON.stringify({ agent_slug, content, stream: false }),
+      signal: AbortSignal.timeout(120000), // 2 min for non-streaming agent response
     });
 
+    if (!response.ok) {
+      const { message: errMsg } = new Error(`Request failed with status ${response.status}`);
+      let detail = errMsg;
+      try {
+        const body = await response.json() as { detail: string };
+        detail = body.detail ?? errMsg;
+      } catch {
+        // ignore
+      }
+      setCookieError(res, errMsg);
+      res.status(200).json({ content: '', status: 'error', error: detail, code: response.status });
+      return;
+    }
+
     // XTM One returns { message_id, content } for non-streaming requests
-    res.json({ content: response.data?.content ?? '', status: 'success' });
+    const data = await response.json() as { message_id: string; content: string };
+    res.json({ content: data?.content ?? '', status: 'success' });
   } catch (e: unknown) {
     logApp.error('Error in agent message proxy', { cause: e });
     const { message } = e as Error;
-    if (axios.isAxiosError(e) && e.response) {
-      const detail = e.response.data?.detail ?? message;
-      setCookieError(res, message);
-      res.status(200).json({ content: '', status: 'error', error: detail, code: e.response.status });
-    } else {
-      setCookieError(res, message);
-      res.status(200).json({ content: '', status: 'error', error: message, code: 503 });
-    }
+    setCookieError(res, message);
+    res.status(200).json({ content: '', status: 'error', error: message, code: 503 });
   }
 };
 
@@ -331,12 +327,18 @@ export const getLegacyChatbotProxy = async (req: Express.Request, res: Express.R
       },
     };
 
-    const response = await axios.post(XTM_ONE_CHATBOT_URL, enhancedBody, {
+    const response = await fetch(XTM_ONE_CHATBOT_URL, {
+      method: 'POST',
       headers,
-      responseType: 'stream',
-      decompress: false,
-      timeout: 0,
+      body: JSON.stringify(enhancedBody),
     });
+
+    if (!response.ok) {
+      const { message: errMsg } = new Error(`Request failed with status ${response.status}`);
+      res.status(response.status).send({ status: response.status, error: errMsg });
+      setCookieError(res, errMsg);
+      return;
+    }
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -345,20 +347,20 @@ export const getLegacyChatbotProxy = async (req: Express.Request, res: Express.R
     res.setHeader('X-Accel-Buffering', 'no');
     res.setHeader('Transfer-Encoding', 'chunked');
     const headersToForward = ['content-type', 'cache-control', 'connection'];
-    Object.entries(response.headers).forEach(([key, value]) => {
-      const lowerKey = key.toLowerCase();
-      if (headersToForward.includes(lowerKey) && value) {
+    response.headers.forEach((value, key) => {
+      if (headersToForward.includes(key.toLowerCase()) && value) {
         res.setHeader(key, value);
       }
     });
 
-    response.data.pipe(res);
+    const nodeStream = response.body ? Readable.fromWeb(response.body as any) : Readable.from([]);
+    nodeStream.pipe(res);
 
     req.on('close', () => {
-      response.data.destroy();
+      nodeStream.destroy();
     });
 
-    response.data.on('error', (error: Error) => {
+    nodeStream.on('error', (error: Error) => {
       logApp.error('Stream error in legacy chatbot proxy', { cause: error });
       if (!res.headersSent) {
         res.status(500).send({ status: 'error', error: error.message });
@@ -370,11 +372,7 @@ export const getLegacyChatbotProxy = async (req: Express.Request, res: Express.R
     logApp.error('Error in legacy chatbot proxy', { cause: e });
     const { message } = e as Error;
 
-    if (axios.isAxiosError(e) && e.response) {
-      res.status(e.response.status).send({ status: e.response.status, error: message });
-    } else {
-      res.status(503).send({ status: 503, error: message });
-    }
     setCookieError(res, message);
+    res.status(503).send({ status: 503, error: message });
   }
 };

@@ -5354,7 +5354,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agent-base@npm:^7.1.0, agent-base@npm:^7.1.2, agent-base@npm:^7.1.4":
+"agent-base@npm:^7.1.0, agent-base@npm:^7.1.2":
   version: 7.1.4
   resolution: "agent-base@npm:7.1.4"
   checksum: 10c0/c2c9ab7599692d594b6a161559ada307b7a624fa4c7b03e3afdb5a5e31cd0e53269115b620fcab024c5ac6a6f37fa5eb2e004f076ad30f5f7e6b8b671f7b35fe
@@ -5742,18 +5742,6 @@ __metadata:
   version: 1.13.2
   resolution: "aws4@npm:1.13.2"
   checksum: 10c0/c993d0d186d699f685d73113733695d648ec7d4b301aba2e2a559d0cd9c1c902308cc52f4095e1396b23fddbc35113644e7f0a6a32753636306e41e3ed6f1e79
-  languageName: node
-  linkType: hard
-
-"axios-cookiejar-support@npm:6.0.5":
-  version: 6.0.5
-  resolution: "axios-cookiejar-support@npm:6.0.5"
-  dependencies:
-    http-cookie-agent: "npm:^7.0.3"
-  peerDependencies:
-    axios: ">=0.20.0"
-    tough-cookie: ">=4.0.0"
-  checksum: 10c0/e493c5423de79fd7cf5d8ad97e1506b06fcc9f36a6bf6e0060663015cb2a7e6458440b6300106d79ab2a6cc4845f5c0948957ea0e76057a3b9aeb1e9758ce7e0
   languageName: node
   linkType: hard
 
@@ -8499,21 +8487,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"http-cookie-agent@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "http-cookie-agent@npm:7.0.3"
-  dependencies:
-    agent-base: "npm:^7.1.4"
-  peerDependencies:
-    tough-cookie: ^4.0.0 || ^5.0.0 || ^6.0.0
-    undici: ^7.0.0
-  peerDependenciesMeta:
-    undici:
-      optional: true
-  checksum: 10c0/da77c932cfa0868769159557e5c0a827e76db21c4533d423f6e8db67ac63cca756ddee8fa2c1a172b150241eda5ee92764662d20a932efb344b204270aa7f11b
-  languageName: node
-  linkType: hard
-
 "http-errors@npm:^2.0.0, http-errors@npm:^2.0.1, http-errors@npm:~2.0.1":
   version: 2.0.1
   resolution: "http-errors@npm:2.0.1"
@@ -10585,8 +10558,6 @@ __metadata:
     archiver-zip-encrypted: "npm:2.0.0"
     async-lock: "npm:1.4.1"
     aws-sdk-v3-proxy: "npm:2.2.0"
-    axios: "npm:1.14.0"
-    axios-cookiejar-support: "npm:6.0.5"
     bcryptjs: "npm:3.0.3"
     bluebird: "npm:3.7.2"
     body-parser: "npm:2.2.2"

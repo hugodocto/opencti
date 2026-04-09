@@ -1,4 +1,3 @@
-import axios from 'axios';
 import conf, { logApp } from '../../../config/conf';
 
 const XTM_ONE_URL = conf.get('xtm:xtm_one_url');
@@ -65,14 +64,20 @@ const xtmOneClient = {
     }
     try {
       const url = `${XTM_ONE_URL}/api/v1/platform/register`;
-      const response = await axios.post(url, input, {
+      const response = await fetch(url, {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${XTM_ONE_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        timeout: 15000,
+        body: JSON.stringify(input),
+        signal: AbortSignal.timeout(15000),
       });
-      return response.data;
+      if (!response.ok) {
+        logApp.error('[XTM One] Registration failed', { error: `Request failed with status ${response.status}` });
+        return null;
+      }
+      return await response.json() as XtmOneRegistrationResponse;
     } catch (error: any) {
       logApp.error('[XTM One] Registration failed', { error: error.message });
       return null;
