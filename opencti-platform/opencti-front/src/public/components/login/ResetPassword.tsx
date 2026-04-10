@@ -377,8 +377,8 @@ const ResetPassword = () => {
       {resetPwdStep === ResetPwdStep.RESET_PASSWORD && (
         <Formik
           onSubmit={onSubmitValidatePassword}
-          initialTouched={{ otp: !!flashError }}
-          initialErrors={{ otp: flashError ? t_i18n(flashError) : '' }}
+          initialTouched={{ password: !!flashError }}
+          initialErrors={{ password: flashError ? t_i18n(flashError) : '' }}
           validationSchema={passwordValidation(t_i18n)}
           initialValues={{ password: '', password_validation: '' }}
         >
