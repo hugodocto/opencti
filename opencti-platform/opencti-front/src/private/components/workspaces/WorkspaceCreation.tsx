@@ -18,6 +18,7 @@ import Security from '../../../utils/Security';
 import useApiMutation from '../../../utils/hooks/useApiMutation';
 import { UserContext } from '../../../utils/hooks/useAuth';
 import { EXPLORE_EXUPDATE, INVESTIGATION_INUPDATE } from '../../../utils/hooks/useGranted';
+import useStoreTempImagesForEntityAfterCreate from '../../../utils/hooks/useStoreTempImagesForEntityAfterCreate';
 import { insertNode } from '../../../utils/store';
 import { isNotEmptyField } from '../../../utils/utils';
 import VisuallyHiddenInput from '../common/VisuallyHiddenInput';
@@ -29,6 +30,16 @@ const workspaceMutation = graphql`
   mutation WorkspaceCreationMutation($input: WorkspaceAddInput!) {
     workspaceAdd(input: $input) {
       id
+      ...WorkspacesLine_node
+    }
+  }
+`;
+
+const workspaceCreationDescriptionPatchMutation = graphql`
+  mutation WorkspaceCreationDescriptionPatchMutation($id: ID!, $input: [EditInput!]!) {
+    workspaceFieldPatch(id: $id, input: $input) {
+      id
+      description
       ...WorkspacesLine_node
     }
   }
@@ -65,7 +76,30 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
 
   const [commitImportMutation] = useApiMutation<WorkspaceCreationImportMutation>(importMutation);
   const [commitCreationMutation] = useApiMutation(workspaceMutation);
+  const [commitDescriptionPatch] = useApiMutation(workspaceCreationDescriptionPatchMutation);
   const navigate = useNavigate();
+
+  const patchWorkspaceDescription = (id: string, description: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      commitDescriptionPatch({
+        variables: {
+          id,
+          input: [{ key: 'description', value: description }],
+        },
+        onCompleted: () => resolve(),
+        onError: reject,
+      });
+    });
+  };
+
+  const { runAfterStoringTempImagesForEntity, getTempImageFieldProps } = useStoreTempImagesForEntityAfterCreate<
+    { workspaceAdd?: { id?: string | null } | null },
+    WorkspaceCreationForm
+  >({
+    getCreatedId: (response) => response?.workspaceAdd?.id,
+    getInitialValue: (values) => values.description,
+    patchField: patchWorkspaceDescription,
+  });
 
   const handleImport = (event: BaseSyntheticEvent) => {
     const importedFile = event.target.files[0];
@@ -104,9 +138,16 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
         handleErrorInForm(error, setErrors);
         setSubmitting(false);
       },
-      onCompleted: () => {
-        setSubmitting(false);
-        resetForm();
+      onCompleted: (response) => {
+        runAfterStoringTempImagesForEntity(response, values, {
+          onSuccess: () => {
+            setSubmitting(false);
+            resetForm();
+          },
+          onError: () => {
+            setSubmitting(false);
+          },
+        });
       },
     });
   };
@@ -181,6 +222,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
                   multiline={true}
                   rows="4"
                   style={{ marginTop: 20 }}
+                  {...getTempImageFieldProps()}
                 />
                 <FormButtonContainer>
                   <Button
