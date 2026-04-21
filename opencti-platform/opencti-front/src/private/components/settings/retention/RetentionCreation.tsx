@@ -268,7 +268,7 @@ const RetentionCreation = ({ paginationOptions }: { paginationOptions: Retention
                   </Alert>
                 )
               }
-              {(formValues.scope?.value === 'knowledge' || formValues.scope?.value === 'history') && (
+              {formValues.scope?.value === 'knowledge' && (
                 <>
                   <Box sx={{
                     paddingTop: 4,
