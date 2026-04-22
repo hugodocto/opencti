@@ -24,7 +24,7 @@ import ItemCreators from '../../../../components/ItemCreators';
 import ItemIcon from '../../../../components/ItemIcon';
 import ItemMarkings from '../../../../components/ItemMarkings';
 import ItemStatus from '../../../../components/ItemStatus';
-import MarkdownDisplay from '../../../../components/MarkdownDisplay';
+import MarkdownDisplay from '../../../../components/markdownDisplay/MarkdownDisplay';
 import { commitMutation } from '../../../../relay/environment';
 import { itemColor } from '../../../../utils/Colors';
 import withRouter from '../../../../utils/compat_router/withRouter';

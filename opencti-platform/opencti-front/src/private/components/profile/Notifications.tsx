@@ -19,7 +19,7 @@ import DataTable from '../../../components/dataGrid/DataTable';
 import { DataTableProps } from '../../../components/dataGrid/dataTableTypes';
 import { defaultRender } from '../../../components/dataGrid/dataTableUtils';
 import { useFormatter } from '../../../components/i18n';
-import MarkdownDisplay from '../../../components/MarkdownDisplay';
+import MarkdownDisplay from '../../../components/markdownDisplay/MarkdownDisplay';
 import { chipInListBasicStyle } from '../../../utils/chipStyle';
 import { hexToRGB } from '../../../utils/Colors';
 import { emptyFilterGroup, isFilterGroupNotEmpty, useGetDefaultFilterObject, useRemoveIdAndIncorrectKeysFromFilterGroupObject } from '../../../utils/filters/filtersUtils';
