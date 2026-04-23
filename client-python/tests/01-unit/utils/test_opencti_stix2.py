@@ -205,6 +205,44 @@ def test_prepare_export_rewrites_embedded_markdown_image_uri(
     assert fetch_calls[0][2] is True
 
 
+def test_prepare_export_rewrites_embedded_markdown_image_uri_with_graphql_in_hostname(
+    opencti_stix2: OpenCTIStix2, monkeypatch
+):
+    monkeypatch.setattr(
+        opencti_stix2.opencti.stix_nested_ref_relationship,
+        "list",
+        lambda **kwargs: [],
+    )
+    opencti_stix2.opencti.api_url = "https://graphql.example.com/graphql"
+
+    fetch_calls = []
+
+    def fake_fetch(url, binary=False, serialize=False):
+        fetch_calls.append((url, binary, serialize))
+        return "Zm9v"
+
+    monkeypatch.setattr(opencti_stix2.opencti, "fetch_opencti_file", fake_fetch)
+
+    entity = {
+        "id": "note--12121212-1212-4121-8121-121212121212",
+        "type": "note",
+        "x_opencti_id": "internal-note-id-graphql-host",
+        "description": "desc ![img](/storage/get/embedded/Note/internal-note-id-graphql-host/a.png)",
+    }
+
+    result = opencti_stix2.prepare_export(entity=entity, mode="simple")
+
+    assert len(result) == 1
+    assert "data:image/png;base64,Zm9v" in result[0]["description"]
+    assert len(fetch_calls) == 1
+    assert (
+        fetch_calls[0][0]
+        == "https://graphql.example.com/storage/get/embedded/Note/internal-note-id-graphql-host/a.png"
+    )
+    assert fetch_calls[0][1] is True
+    assert fetch_calls[0][2] is True
+
+
 def test_prepare_export_rewrites_embedded_markdown_image_uri_view_path(
     opencti_stix2: OpenCTIStix2, monkeypatch
 ):
