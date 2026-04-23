@@ -15697,7 +15697,7 @@ input SecurityCoverageAddInput {
 }
 
 input AskSendOtpInput {
-  email: String!
+  email: String
 }
 
 input VerifyOtpInput {

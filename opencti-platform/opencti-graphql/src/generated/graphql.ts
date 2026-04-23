@@ -914,7 +914,7 @@ export type ArtifactAddInput = {
 };
 
 export type AskSendOtpInput = {
-  email: Scalars['String']['input'];
+  email?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Assignee = {
