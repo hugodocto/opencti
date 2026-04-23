@@ -17,7 +17,7 @@ import conf, {
 import { AuthenticationFailure, ConfigurationError, DatabaseError, DraftLockedError, ForbiddenAccess, FunctionalError, UnsupportedError } from '../config/errors';
 import { getEntitiesListFromCache, getEntitiesMapFromCache, getEntityFromCache } from '../database/cache';
 import { elLoadBy, elRawDeleteByQuery } from '../database/engine';
-import { createEntity, createRelation, deleteElementById, deleteRelationsByFromAndTo, patchAttribute, updateAttribute, updatedInputsToData } from '../database/middleware';
+import { createEntity, createRelation, deleteElementById, deleteRelationsByFromAndTo, patchAttribute, updateAttribute, updateAttributeLockFirst, updatedInputsToData } from '../database/middleware';
 import {
   fullEntitiesList,
   fullEntitiesThoughAggregationConnection,
@@ -852,7 +852,7 @@ export const addUser = async (context, user, newUser) => {
 };
 
 export const roleEditField = async (context, user, roleId, input) => {
-  const { element } = await updateAttribute(context, user, roleId, ENTITY_TYPE_ROLE, input);
+  const { element } = await updateAttributeLockFirst(context, user, roleId, ENTITY_TYPE_ROLE, input);
   await publishUserAction({
     user,
     event_type: 'mutation',
@@ -997,7 +997,7 @@ export const userEditField = async (context, user, userId, rawInputs) => {
       inputs.push(input);
     }
   }
-  const { element } = await updateAttribute(context, user, userId, ENTITY_TYPE_USER, inputs);
+  const { element } = await updateAttributeLockFirst(context, user, userId, ENTITY_TYPE_USER, inputs);
   const input = updatedInputsToData(element, inputs);
   const personalUpdate = user.id === userId;
   const actionEmail = ENABLED_DEMO_MODE ? REDACTED_USER.user_email : element.user_email;
