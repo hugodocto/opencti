@@ -413,8 +413,8 @@ const useGraphInteractions = () => {
     rebuildGraphData(newNodes);
   };
 
-  const addNode = (data: ObjectToParse, addAnyway = false) => {
-    if (!addAnyway && rawObjects.find((o) => o.id === data.id)) {
+  const addNode = (data: ObjectToParse) => {
+    if (rawObjects.find((o) => o.id === data.id)) {
       return;
     }
     setRawObjects((old) => ([...old, data]));
@@ -460,17 +460,18 @@ const useGraphInteractions = () => {
     if (nodeIds.includes(relObj.id)) return;
     const relRaw = rawObjects.find((o) => o.id === relObj.id);
     if (!relRaw) return;
-    // Add the relationship as a node in the graph
-    addNode(relRaw, true);
-    // Remove the single link that was representing this relationship
-    // and create two connector links (from→relNode, relNode→to)
-    removeLink(relRaw.id);
-    const [linkToRelNode, linkFromRelNode] = buildNestedLinks(relRaw);
-    // set the new graph data with the new node and links, but without the old link representing the relationship
+
+    // Set the new graph data with the new node and links, but without the old link representing the relationship
     setGraphData((oldData) => {
+      const nodeToAdd = buildNode(relRaw, rawPositions);
+      const [linkToRelNode, linkFromRelNode] = buildNestedLinks(relRaw);
+      const nodesWithoutNewOne = (oldData?.nodes ?? []).filter((n) => n.id !== nodeToAdd.id);
       return {
-        nodes: oldData?.nodes ?? [],
-        links: [...(oldData?.links ?? []), linkToRelNode, linkFromRelNode],
+        nodes: [...nodesWithoutNewOne, nodeToAdd], // Add the relationship as a node in the graph
+        links: [...(oldData?.links ?? []).filter((link) => link.id !== relRaw.id), // Remove the single link that was representing this relationship
+          linkToRelNode, // Add the new link from the source to the relationship node
+          linkFromRelNode, // Add the new link from the relationship node to the target
+        ],
       };
     });
   };
