@@ -152,6 +152,7 @@ const RetentionEditionContainer = (props) => {
               name="name"
               label={t_i18n('Name')}
               fullWidth={true}
+              mandatory
             />
             <Field
               component={SelectField}

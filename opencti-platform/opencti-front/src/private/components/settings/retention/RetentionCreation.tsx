@@ -158,7 +158,7 @@ const RetentionCreation = ({ paginationOptions }: { paginationOptions: Retention
           onSubmit={onSubmit}
           onReset={onClose}
         >
-          {({ submitForm, handleReset, isSubmitting, values: formValues, setFieldValue }) => (
+          {({ submitForm, handleReset, isSubmitting, values: formValues, setFieldValue, validateForm, setTouched }) => (
             <Form>
               <Field
                 component={TextField}
@@ -166,6 +166,7 @@ const RetentionCreation = ({ paginationOptions }: { paginationOptions: Retention
                 name="name"
                 label={t_i18n('Name')}
                 fullWidth={true}
+                mandatory
               />
               <Field
                 component={SelectField}
@@ -276,7 +277,13 @@ const RetentionCreation = ({ paginationOptions }: { paginationOptions: Retention
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => handleVerify(formValues)}
+                  onClick={async () => {
+                    const errors = await validateForm();
+                    setTouched({ name: true, retention_unit: true, max_retention: true });
+                    if (Object.keys(errors).length === 0) {
+                      handleVerify(formValues);
+                    }
+                  }}
                   disabled={isSubmitting}
                 >
                   {t_i18n('Verify')}
