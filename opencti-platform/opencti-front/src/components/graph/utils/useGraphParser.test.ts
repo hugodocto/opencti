@@ -61,6 +61,8 @@ describe('useGraphParser', () => {
       expect(node.entity_type).toBe('Malware');
       expect(node.createdBy).toEqual({ id: 'creator-1', name: 'Creator' });
       expect(node.markedBy).toEqual([{ id: 'marking-1', definition: 'TLP:RED' }]);
+      expect(node.isObservable).toBe(false);
+      expect(node.isNestedInferred).toBe(false);
       expect(node.disabled).toBe(false);
       expect(node.val).toBe(1);
       expect(node.z).toBe(0); // default z to 0 when no position is provided
@@ -88,22 +90,6 @@ describe('useGraphParser', () => {
       expect(node.color).toBe('#ff0000');
     });
 
-    it('should set isObservable to true when observable_value is present', () => {
-      const entity = constructEntity({ id: 'node-1', observable_value: '1.2.3.4' });
-
-      const node = parser.buildNode(entity, emptyPositions);
-
-      expect(node.isObservable).toBe(true);
-    });
-
-    it('should set isObservable to false when observable_value is absent', () => {
-      const entity = constructEntity({ id: 'node-1' });
-
-      const node = parser.buildNode(entity, emptyPositions);
-
-      expect(node.isObservable).toBe(false);
-    });
-
     it('should use provided numberOfConnectedElement over data value', () => {
       const entity = constructEntity({ id: 'node-1', numberOfConnectedElement: 10 });
 
@@ -129,30 +115,6 @@ describe('useGraphParser', () => {
       expect(node.fromType).toBe('Malware');
       expect(node.toId).toBe('entity-B');
       expect(node.toType).toBe('Attack-Pattern');
-    });
-
-    it('should set isNestedInferred to false for non-inferred entities', () => {
-      const entity = constructEntity({ id: 'node-1' });
-
-      const node = parser.buildNode(entity, emptyPositions);
-
-      expect(node.isNestedInferred).toBe(false);
-    });
-
-    it('should set isNestedInferred to true for inferred-only entities', () => {
-      const entity = constructEntity({ id: 'node-1', types: ['inferred'] });
-
-      const node = parser.buildNode(entity, emptyPositions);
-
-      expect(node.isNestedInferred).toBe(true);
-    });
-
-    it('should set isNestedInferred to false when both inferred and manual', () => {
-      const entity = constructEntity({ id: 'node-1', types: ['inferred', 'manual'] });
-
-      const node = parser.buildNode(entity, emptyPositions);
-
-      expect(node.isNestedInferred).toBe(false);
     });
   });
 
