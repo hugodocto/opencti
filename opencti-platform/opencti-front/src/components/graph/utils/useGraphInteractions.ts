@@ -11,7 +11,7 @@ const useGraphInteractions = () => {
     buildLink,
     buildCorrelationData,
     buildGraphData,
-    buildNestedLinks,
+    buildGraphDataAfterRelationshipLinkToNodeConversion,
   } = useGraphParser();
 
   const {
@@ -448,49 +448,27 @@ const useGraphInteractions = () => {
     });
   };
 
-  /**
-   * If a relationship is displayed as a link but needs to become a node
-   * (because it is the from or to of an other relationship), convert it:
-   * add it as a node,
-   * remove its existing link and create instead two links connecting its source and target to the new node.
-   */
-  const convertRelationshipLinkToNode = (relObj: NonNullable<ObjectToParse['from']>) => {
-    const nodeIds = graphData?.nodes.map((n) => n.id) ?? [];
-    if (!relObj.relationship_type) return;
-    if (nodeIds.includes(relObj.id)) return;
-    const relRaw = rawObjects.find((o) => o.id === relObj.id);
-    if (!relRaw) return;
-
-    // Set the new graph data with the new node and links, but without the old link representing the relationship
-    setGraphData((oldData) => {
-      const nodeToAdd = buildNode(relRaw, rawPositions);
-      const [linkToRelNode, linkFromRelNode] = buildNestedLinks(relRaw);
-      const nodesWithoutNewOne = (oldData?.nodes ?? []).filter((n) => n.id !== nodeToAdd.id);
-      return {
-        nodes: [...nodesWithoutNewOne, nodeToAdd], // Add the relationship as a node in the graph
-        links: [...(oldData?.links ?? []).filter((link) => link.id !== relRaw.id), // Remove the single link that was representing this relationship
-          linkToRelNode, // Add the new link from the source to the relationship node
-          linkFromRelNode, // Add the new link from the relationship node to the target
-        ],
-      };
-    });
-  };
-
   const addLink = (data: ObjectToParse) => {
     if (!rawObjects.find((o) => o.id === data.id)) {
       setRawObjects((old) => ([...old, data]));
     }
-    // If the from or the to of the link is a relationship and is not already in the graph nodes
-    // add it as a node so the link can be drawn properly.
-    if (data.from?.relationship_type) convertRelationshipLinkToNode(data.from);
-    if (data.to?.relationship_type) convertRelationshipLinkToNode(data.to);
-    const link = buildLink(data);
     setGraphData((oldData) => {
-      const withoutExisting = (oldData?.links ?? []).filter((l) => l.id !== link.id);
-      return {
-        links: [...withoutExisting, link],
-        nodes: oldData?.nodes ?? [],
-      };
+      let newGraphData = oldData;
+      // If the from or the to of the link is a relationship and is not already in the graph nodes
+      // add it as a node so the link can be drawn properly.
+      if (data.from?.relationship_type) {
+        newGraphData = buildGraphDataAfterRelationshipLinkToNodeConversion(newGraphData, rawObjects, rawPositions, data.from);
+      }
+      if (data.to?.relationship_type) {
+        newGraphData = buildGraphDataAfterRelationshipLinkToNodeConversion(newGraphData, rawObjects, rawPositions, data.to);
+      }
+      // link to add
+      const link = buildLink(data);
+      const withoutExisting = (newGraphData?.links ?? []).filter((l) => l.id !== link.id);
+      const newLinks = [...withoutExisting, link];
+      const newNodes = newGraphData?.nodes ?? [];
+      // set the new links and nodes
+      return { links: newLinks, nodes: newNodes };
     });
   };
 
