@@ -22,7 +22,7 @@ import { OpinionCreationUserMutation$data } from './__generated__/OpinionCreatio
 import useDefaultValues from '../../../../utils/hooks/useDefaultValues';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
-import useStoreTempImagesForEntityAfterCreate from '../../../../utils/hooks/useStoreTempImagesForEntityAfterCreate';
+import type { MarkdownImagesController } from '../../../../components/fields/markdownField/MarkdownField';
 import { yupShapeConditionalRequired, useDynamicSchemaCreationValidation, useIsMandatoryAttribute } from '../../../../utils/hooks/useEntitySettings';
 
 // Deprecated - https://mui.com/system/styles/basics/
@@ -142,20 +142,21 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
     });
   };
 
-  const { runAfterStoringTempImagesForEntity, getTempImageFieldProps } = useStoreTempImagesForEntityAfterCreate<
-    Partial<OpinionCreationMutation$data & OpinionCreationUserMutation$data>,
-    OpinionAddInput
-  >({
-    getCreatedId: (response) => response?.opinionAdd?.id,
-    getInitialValue: (values) => values.explanation,
-    patchField: patchOpinionExplanation,
-  });
+  let descriptionMarkdownController: MarkdownImagesController | null = null;
+
+  const buildMarkdownFilesInput = () => {
+    const markdownTempFiles = descriptionMarkdownController?.getPendingImageFiles() ?? [];
+    return markdownTempFiles.length > 0
+      ? { files: markdownTempFiles, embedded: markdownTempFiles.map(() => true) }
+      : {};
+  };
 
   const onSubmit: FormikConfig<OpinionAddInput>['onSubmit'] = (
     values: OpinionAddInput,
     { setSubmitting, setErrors, resetForm }: FormikHelpers<OpinionAddInput>,
   ) => {
     const input: OpinionCreationMutation$variables['input'] = {
+      ...buildMarkdownFilesInput(),
       opinion: values.opinion,
       explanation: values.explanation,
       confidence: parseInt(String(values.confidence), 10),
@@ -179,16 +180,13 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
         setSubmitting(false);
       },
       onCompleted: (response) => {
-        runAfterStoringTempImagesForEntity(response, values, {
-          onSuccess: () => {
+        
             setSubmitting(false);
             resetForm();
             if (onCompleted) {
               onCompleted();
             }
-          },
-          onError: () => setSubmitting(false),
-        });
+          
       },
     });
   };
@@ -236,7 +234,11 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
             multiline={true}
             rows="4"
             style={{ marginTop: 20 }}
-            {...getTempImageFieldProps(values.objectMarking.map((v) => v.value))}
+            autoPersistOnBlur={false}
+              registerMarkdownImagesController={(controller: MarkdownImagesController) => {
+                descriptionMarkdownController = controller;
+              }}
+              uploadFileMarkings={values.objectMarking.map((v) => v.value)}
           />
           <ConfidenceField
             entityType="Opinion"
@@ -330,14 +332,14 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
     });
   };
 
-  const { runAfterStoringTempImagesForEntity, getTempImageFieldProps } = useStoreTempImagesForEntityAfterCreate<
-    Partial<OpinionCreationMutation$data & OpinionCreationUserMutation$data>,
-    OpinionAddInput
-  >({
-    getCreatedId: (response) => response?.userOpinionAdd?.id,
-    getInitialValue: (values) => values.explanation,
-    patchField: patchOpinionExplanation,
-  });
+  let descriptionMarkdownController: MarkdownImagesController | null = null;
+
+  const buildMarkdownFilesInput = () => {
+    const markdownTempFiles = descriptionMarkdownController?.getPendingImageFiles() ?? [];
+    return markdownTempFiles.length > 0
+      ? { files: markdownTempFiles, embedded: markdownTempFiles.map(() => true) }
+      : {};
+  };
 
   const onSubmit: FormikConfig<OpinionAddInput>['onSubmit'] = (
     values: OpinionAddInput,
@@ -369,16 +371,13 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
         setSubmitting(false);
       },
       onCompleted: (response) => {
-        runAfterStoringTempImagesForEntity(response, values, {
-          onSuccess: () => {
+        
             setSubmitting(false);
             resetForm();
             if (onCompleted) {
               onCompleted();
             }
-          },
-          onError: () => setSubmitting(false),
-        });
+          
       },
     });
   };
@@ -426,7 +425,11 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
             multiline={true}
             rows="4"
             style={{ marginTop: 20 }}
-            {...getTempImageFieldProps(values.objectMarking.map((v) => v.value))}
+            autoPersistOnBlur={false}
+              registerMarkdownImagesController={(controller: MarkdownImagesController) => {
+                descriptionMarkdownController = controller;
+              }}
+              uploadFileMarkings={values.objectMarking.map((v) => v.value)}
           />
           <ConfidenceField
             entityType="Opinion"
