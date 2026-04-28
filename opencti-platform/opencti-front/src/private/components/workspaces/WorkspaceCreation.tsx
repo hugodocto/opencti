@@ -35,7 +35,6 @@ const workspaceMutation = graphql`
   }
 `;
 
-
 export const importMutation = graphql`
   mutation WorkspaceCreationImportMutation($file: Upload!) {
     workspaceConfigurationImport(file: $file)
@@ -109,11 +108,9 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
         handleErrorInForm(error, setErrors);
         setSubmitting(false);
       },
-      onCompleted: (response) => {
-
-            setSubmitting(false);
-            resetForm();
-          
+      onCompleted: () => {
+        setSubmitting(false);
+        resetForm();
       },
     });
   };
@@ -189,7 +186,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
                   rows="4"
                   style={{ marginTop: 20 }}
                   autoPersistOnBlur={false}
-            registerMarkdownImagesController={registerMarkdownImagesController}
+                  registerMarkdownImagesController={registerMarkdownImagesController}
                 />
                 <FormButtonContainer>
                   <Button
