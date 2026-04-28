@@ -18,7 +18,7 @@ import Security from '../../../utils/Security';
 import useApiMutation from '../../../utils/hooks/useApiMutation';
 import { UserContext } from '../../../utils/hooks/useAuth';
 import { EXPLORE_EXUPDATE, INVESTIGATION_INUPDATE } from '../../../utils/hooks/useGranted';
-import type { MarkdownImagesController } from '../../../components/fields/markdownField/MarkdownField';
+import useMarkdownCreationFilesInput from '../../../utils/markdown/useMarkdownCreationFilesInput';
 import { insertNode } from '../../../utils/store';
 import { isNotEmptyField } from '../../../utils/utils';
 import VisuallyHiddenInput from '../common/VisuallyHiddenInput';
@@ -92,14 +92,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
     });
   };
 
-  let descriptionMarkdownController: MarkdownImagesController | null = null;
-
-  const buildMarkdownFilesInput = () => {
-    const markdownTempFiles = descriptionMarkdownController?.getPendingImageFiles() ?? [];
-    return markdownTempFiles.length > 0
-      ? { files: markdownTempFiles, embedded: markdownTempFiles.map(() => true) }
-      : {};
-  };
+  const { buildMarkdownFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
 
   const handleImport = (event: BaseSyntheticEvent) => {
     const importedFile = event.target.files[0];
@@ -219,9 +212,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
                   rows="4"
                   style={{ marginTop: 20 }}
                   autoPersistOnBlur={false}
-            registerMarkdownImagesController={(controller: MarkdownImagesController) => {
-              descriptionMarkdownController = controller;
-            }}
+            registerMarkdownImagesController={registerMarkdownImagesController}
                 />
                 <FormButtonContainer>
                   <Button

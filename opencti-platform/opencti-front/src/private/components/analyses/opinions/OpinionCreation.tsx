@@ -17,12 +17,11 @@ import { FieldOption, fieldSpacingContainerStyle } from '../../../../utils/field
 import ConfidenceField from '../../common/form/ConfidenceField';
 import type { Theme } from '../../../../components/Theme';
 import { ExternalReferencesField } from '../../common/form/ExternalReferencesField';
-import { OpinionCreationMutation$data, OpinionCreationMutation$variables } from './__generated__/OpinionCreationMutation.graphql';
-import { OpinionCreationUserMutation$data } from './__generated__/OpinionCreationUserMutation.graphql';
+import { OpinionCreationMutation$variables } from './__generated__/OpinionCreationMutation.graphql';
 import useDefaultValues from '../../../../utils/hooks/useDefaultValues';
 import CustomFileUploader from '../../common/files/CustomFileUploader';
 import useApiMutation from '../../../../utils/hooks/useApiMutation';
-import type { MarkdownImagesController } from '../../../../components/fields/markdownField/MarkdownField';
+import useMarkdownCreationFilesInput from '../../../../utils/markdown/useMarkdownCreationFilesInput';
 import { yupShapeConditionalRequired, useDynamicSchemaCreationValidation, useIsMandatoryAttribute } from '../../../../utils/hooks/useEntitySettings';
 
 // Deprecated - https://mui.com/system/styles/basics/
@@ -67,16 +66,6 @@ export const opinionCreationMutation = graphql`
       opinion
       explanation
       ...OpinionLine_node
-    }
-  }
-`;
-
-const opinionCreationExplanationPatchMutation = graphql`
-  mutation OpinionCreationExplanationPatchMutation($id: ID!, $input: [EditInput]!) {
-    opinionEdit(id: $id) {
-      fieldPatch(input: $input) {
-        id
-      }
     }
   }
 `;
@@ -128,35 +117,22 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
   );
 
   const [commit] = useApiMutation(opinionCreationMutation);
-  const [commitExplanationPatch] = useApiMutation(opinionCreationExplanationPatchMutation);
-  const patchOpinionExplanation = (id: string, explanation: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      commitExplanationPatch({
-        variables: {
-          id,
-          input: [{ key: 'explanation', value: explanation }],
-        },
-        onCompleted: () => resolve(),
-        onError: reject,
-      });
-    });
-  };
-
-  let descriptionMarkdownController: MarkdownImagesController | null = null;
-
-  const buildMarkdownFilesInput = () => {
-    const markdownTempFiles = descriptionMarkdownController?.getPendingImageFiles() ?? [];
-    return markdownTempFiles.length > 0
-      ? { files: markdownTempFiles, embedded: markdownTempFiles.map(() => true) }
-      : {};
-  };
-
+  const { buildMarkdownFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
   const onSubmit: FormikConfig<OpinionAddInput>['onSubmit'] = (
     values: OpinionAddInput,
     { setSubmitting, setErrors, resetForm }: FormikHelpers<OpinionAddInput>,
   ) => {
+    const markdownFilesInput = buildMarkdownFilesInput();
+    const files = [
+      ...(markdownFilesInput.files ?? []),
+      ...(values.file ? [values.file] : []),
+    ];
+    const embedded = [
+      ...(markdownFilesInput.embedded ?? []),
+      ...(values.file ? [false] : []),
+    ];
+
     const input: OpinionCreationMutation$variables['input'] = {
-      ...buildMarkdownFilesInput(),
       opinion: values.opinion,
       explanation: values.explanation,
       confidence: parseInt(String(values.confidence), 10),
@@ -164,7 +140,10 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
       objectMarking: values.objectMarking.map((v) => v.value),
       objectLabel: values.objectLabel.map((v) => v.value),
       externalReferences: values.externalReferences.map(({ value }) => value),
-      file: values.file,
+      ...(files.length > 0 && {
+        files,
+        embedded,
+      }),
     };
     commit({
       variables: {
@@ -179,14 +158,12 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
         handleErrorInForm(error, setErrors);
         setSubmitting(false);
       },
-      onCompleted: (response) => {
-        
-            setSubmitting(false);
-            resetForm();
-            if (onCompleted) {
-              onCompleted();
-            }
-          
+      onCompleted: () => {
+        setSubmitting(false);
+        resetForm();
+        if (onCompleted) {
+          onCompleted();
+        }
       },
     });
   };
@@ -235,10 +212,8 @@ export const OpinionCreationFormKnowledgeEditor: FunctionComponent<OpinionFormPr
             rows="4"
             style={{ marginTop: 20 }}
             autoPersistOnBlur={false}
-              registerMarkdownImagesController={(controller: MarkdownImagesController) => {
-                descriptionMarkdownController = controller;
-              }}
-              uploadFileMarkings={values.objectMarking.map((v) => v.value)}
+            registerMarkdownImagesController={registerMarkdownImagesController}
+            uploadFileMarkings={values.objectMarking.map((v) => v.value)}
           />
           <ConfidenceField
             entityType="Opinion"
@@ -318,33 +293,21 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
   );
 
   const [commit] = useApiMutation(opinionCreationUserMutation);
-  const [commitExplanationPatch] = useApiMutation(opinionCreationExplanationPatchMutation);
-  const patchOpinionExplanation = (id: string, explanation: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      commitExplanationPatch({
-        variables: {
-          id,
-          input: [{ key: 'explanation', value: explanation }],
-        },
-        onCompleted: () => resolve(),
-        onError: reject,
-      });
-    });
-  };
-
-  let descriptionMarkdownController: MarkdownImagesController | null = null;
-
-  const buildMarkdownFilesInput = () => {
-    const markdownTempFiles = descriptionMarkdownController?.getPendingImageFiles() ?? [];
-    return markdownTempFiles.length > 0
-      ? { files: markdownTempFiles, embedded: markdownTempFiles.map(() => true) }
-      : {};
-  };
-
+  const { buildMarkdownFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
   const onSubmit: FormikConfig<OpinionAddInput>['onSubmit'] = (
     values: OpinionAddInput,
     { setSubmitting, setErrors, resetForm }: FormikHelpers<OpinionAddInput>,
   ) => {
+    const markdownFilesInput = buildMarkdownFilesInput();
+    const files = [
+      ...(markdownFilesInput.files ?? []),
+      ...(values.file ? [values.file] : []),
+    ];
+    const embedded = [
+      ...(markdownFilesInput.embedded ?? []),
+      ...(values.file ? [false] : []),
+    ];
+
     const finalValues: OpinionCreationMutation$variables['input'] = {
       opinion: values.opinion,
       explanation: values.explanation,
@@ -353,10 +316,11 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
       objectMarking: values.objectMarking.map((v) => v.value),
       objectLabel: values.objectLabel.map((v) => v.value),
       externalReferences: values.externalReferences.map(({ value }) => value),
+      ...(files.length > 0 && {
+        files,
+        embedded,
+      }),
     };
-    if (values.file) {
-      finalValues.file = values.file;
-    }
     commit({
       variables: {
         input: finalValues,
@@ -370,14 +334,12 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
         handleErrorInForm(error, setErrors);
         setSubmitting(false);
       },
-      onCompleted: (response) => {
-        
-            setSubmitting(false);
-            resetForm();
-            if (onCompleted) {
-              onCompleted();
-            }
-          
+      onCompleted: () => {
+        setSubmitting(false);
+        resetForm();
+        if (onCompleted) {
+          onCompleted();
+        }
       },
     });
   };
@@ -426,10 +388,8 @@ export const OpinionCreationFormKnowledgeParticipant: FunctionComponent<OpinionF
             rows="4"
             style={{ marginTop: 20 }}
             autoPersistOnBlur={false}
-              registerMarkdownImagesController={(controller: MarkdownImagesController) => {
-                descriptionMarkdownController = controller;
-              }}
-              uploadFileMarkings={values.objectMarking.map((v) => v.value)}
+            registerMarkdownImagesController={registerMarkdownImagesController}
+            uploadFileMarkings={values.objectMarking.map((v) => v.value)}
           />
           <ConfidenceField
             entityType="Opinion"
