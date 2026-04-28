@@ -69,7 +69,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
   const [commitCreationMutation] = useApiMutation(workspaceMutation);
   const navigate = useNavigate();
 
-  const { buildMarkdownFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
+  const { buildCreationFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
 
   const handleImport = (event: BaseSyntheticEvent) => {
     const importedFile = event.target.files[0];
@@ -92,7 +92,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
     commitCreationMutation({
       variables: {
         input: {
-          ...buildMarkdownFilesInput(),
+          ...buildCreationFilesInput(),
           ...values,
           type,
         },
