@@ -35,15 +35,6 @@ const workspaceMutation = graphql`
   }
 `;
 
-const workspaceCreationDescriptionPatchMutation = graphql`
-  mutation WorkspaceCreationDescriptionPatchMutation($id: ID!, $input: [EditInput!]!) {
-    workspaceFieldPatch(id: $id, input: $input) {
-      id
-      description
-      ...WorkspacesLine_node
-    }
-  }
-`;
 
 export const importMutation = graphql`
   mutation WorkspaceCreationImportMutation($file: Upload!) {
@@ -76,21 +67,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
 
   const [commitImportMutation] = useApiMutation<WorkspaceCreationImportMutation>(importMutation);
   const [commitCreationMutation] = useApiMutation(workspaceMutation);
-  const [commitDescriptionPatch] = useApiMutation(workspaceCreationDescriptionPatchMutation);
   const navigate = useNavigate();
-
-  const patchWorkspaceDescription = (id: string, description: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      commitDescriptionPatch({
-        variables: {
-          id,
-          input: [{ key: 'description', value: description }],
-        },
-        onCompleted: () => resolve(),
-        onError: reject,
-      });
-    });
-  };
 
   const { buildMarkdownFilesInput, registerMarkdownImagesController } = useMarkdownCreationFilesInput();
 
@@ -115,7 +92,7 @@ const WorkspaceCreation = ({ paginationOptions, type }: WorkspaceCreationProps) 
     commitCreationMutation({
       variables: {
         input: {
-        ...buildMarkdownFilesInput(),
+          ...buildMarkdownFilesInput(),
           ...values,
           type,
         },
