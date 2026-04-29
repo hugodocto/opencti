@@ -17,12 +17,11 @@ import { createSyncHttpUri, httpBase } from '../domain/connector-utils';
 import { EVENT_CURRENT_VERSION } from '../database/stream/stream-utils';
 import { storeSyncConsumerMetrics, clearSyncConsumerMetrics } from '../graphql/syncConsumerMetrics';
 import { createParser } from 'eventsource-parser';
-import { ALLOWED_EMBEDDED_IMAGE_MIME_TYPES, extractMarkdownImageReferences, rewriteMarkdownImageUrls } from '../database/markdown-embedded-images';
+import { ALLOWED_EMBEDDED_IMAGE_MIME_TYPE_SET, extractMarkdownImageReferences, MARKDOWN_FIELD_KEYS, rewriteMarkdownImageUrls } from '../database/markdown-embedded-images';
 
 const SYNC_MANAGER_KEY = conf.get('sync_manager:lock_key') || 'sync_manager_lock';
 const SCHEDULE_TIME = conf.get('sync_manager:interval') || 10000;
 const WAIT_TIME_ACTION = 2000;
-const MARKDOWN_FIELD_KEYS = ['description', 'x_opencti_description', 'content'];
 
 const hasEmbeddedStorageRef = (markdown) => {
   return markdown.includes('/storage/get/embedded/') || markdown.includes('/storage/view/embedded');
@@ -50,6 +49,10 @@ const extractStorageRelativePath = (candidateUri) => {
 };
 
 const buildSyncStorageFetchUri = (syncUri, storageUri) => {
+  if (typeof storageUri !== 'string') {
+    return null;
+  }
+
   const trimmedStorageUri = storageUri.trim();
   if (/^https?:\/\//i.test(trimmedStorageUri)) {
     try {
@@ -58,8 +61,9 @@ const buildSyncStorageFetchUri = (syncUri, storageUri) => {
       if (extractedPath) {
         return `${httpBase(syncUri)}${extractedPath}`;
       }
+      return null;
     } catch {
-      return trimmedStorageUri;
+      return null;
     }
   }
 
@@ -68,8 +72,7 @@ const buildSyncStorageFetchUri = (syncUri, storageUri) => {
     return `${httpBase(syncUri)}${extractedPath}`;
   }
 
-  const normalized = trimmedStorageUri.startsWith('/') ? trimmedStorageUri.substring(1) : trimmedStorageUri;
-  return `${httpBase(syncUri)}${normalized}`;
+  return null;
 };
 
 const syncManagerInstance = (syncId) => {
@@ -115,14 +118,18 @@ const syncManagerInstance = (syncId) => {
       const entityFile = entityFiles[index];
       const { uri: fileUri } = entityFile;
       try {
-        const response = await httpClient.get(buildSyncStorageFetchUri(uri, fileUri));
+        const fetchUri = buildSyncStorageFetchUri(uri, fileUri);
+        if (!fetchUri) {
+          logApp.warn('[OPENCTI] Sync: Invalid storage file URI, skipping file fetch.', { fileUri });
+          continue;
+        }
+        const response = await httpClient.get(fetchUri);
         entityFile.data = Buffer.from(response.data).toString('base64');
       } catch (e) {
         logApp.warn('[OPENCTI] Sync: Error when trying to get file from storage. Skipping file.', { fileUri, message: e.message });
       }
     }
 
-    const allowedMimeTypes = new Set(ALLOWED_EMBEDDED_IMAGE_MIME_TYPES);
     const resolveEmbeddedImagesInMarkdownDescription = async (markdown) => {
       const embeddedReferences = extractMarkdownImageReferences(markdown)
         .filter((reference) => reference.isEmbeddedStorage);
@@ -136,12 +143,20 @@ const syncManagerInstance = (syncId) => {
       for (let i = 0; i < uniqueReferenceUrls.length; i += 1) {
         const embeddedStorageUri = uniqueReferenceUrls[i];
         try {
-          const response = await httpClient.get(buildSyncStorageFetchUri(uri, embeddedStorageUri));
+          const fetchUri = buildSyncStorageFetchUri(uri, embeddedStorageUri);
+          if (!fetchUri) {
+            logApp.warn('[OPENCTI] Sync: Invalid embedded markdown storage URI, keeping original URI.', {
+              embeddedStorageUri,
+            });
+            uriByReferenceUrl.set(embeddedStorageUri, null);
+            continue;
+          }
+          const response = await httpClient.get(fetchUri);
           const headerMimeType = extractMimeTypeFromHeader(response);
           const pathMimeType = mime.lookup(embeddedStorageUri);
           const detectedMime = headerMimeType || (pathMimeType || null);
 
-          if (!detectedMime || !allowedMimeTypes.has(detectedMime)) {
+          if (!detectedMime || !ALLOWED_EMBEDDED_IMAGE_MIME_TYPE_SET.has(detectedMime)) {
             logApp.warn('[OPENCTI] Sync: Unsupported embedded markdown image mime type, keeping original URI.', {
               embeddedStorageUri,
               mimeType: detectedMime,
@@ -168,15 +183,8 @@ const syncManagerInstance = (syncId) => {
       return rewrittenMarkdown;
     };
 
-    const resolveEmbeddedImagesInDescriptionFields = async (payload) => {
-      if (!payload || typeof payload !== 'object') {
-        return;
-      }
-
-      if (Array.isArray(payload)) {
-        for (let i = 0; i < payload.length; i += 1) {
-          await resolveEmbeddedImagesInDescriptionFields(payload[i]);
-        }
+    const resolveEmbeddedImagesMarkdownFields = async (payload) => {
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
         return;
       }
 
@@ -185,29 +193,17 @@ const syncManagerInstance = (syncId) => {
         const value = payload[key];
         if (typeof value === 'string' && hasEmbeddedStorageRef(value)) {
           payload[key] = await resolveEmbeddedImagesInMarkdownDescription(value);
-        }
-      }
-
-      const descriptions = payload.descriptions;
-      if (Array.isArray(descriptions)) {
-        for (let i = 0; i < descriptions.length; i += 1) {
-          if (typeof descriptions[i] === 'string' && hasEmbeddedStorageRef(descriptions[i])) {
-            descriptions[i] = await resolveEmbeddedImagesInMarkdownDescription(descriptions[i]);
+        } else if (Array.isArray(value)) {
+          for (let j = 0; j < value.length; j += 1) {
+            if (typeof value[j] === 'string' && hasEmbeddedStorageRef(value[j])) {
+              value[j] = await resolveEmbeddedImagesInMarkdownDescription(value[j]);
+            }
           }
         }
       }
-
-      const entries = Object.entries(payload);
-      for (let i = 0; i < entries.length; i += 1) {
-        const [key, value] = entries[i];
-        if (MARKDOWN_FIELD_KEYS.includes(key) || key === 'descriptions') {
-          continue;
-        }
-        await resolveEmbeddedImagesInDescriptionFields(value);
-      }
     };
 
-    await resolveEmbeddedImagesInDescriptionFields(processingData);
+    await resolveEmbeddedImagesMarkdownFields(processingData);
     return { data: processingData, previous_standard: idOperation?.value };
   };
   const saveCurrentState = async (context, type, eventId) => {
