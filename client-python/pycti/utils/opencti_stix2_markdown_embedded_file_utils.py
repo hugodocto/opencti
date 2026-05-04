@@ -1,6 +1,22 @@
 from typing import Callable
 
 
+def _parse_markdown_image_url(destination: str) -> str:
+    text = destination.strip()
+    if not text:
+        return ""
+
+    # Support <url> syntax and optional title part after whitespace.
+    if text.startswith("<"):
+        closing_index = text.find(">", 1)
+        if closing_index > 0:
+            return text[1:closing_index].strip()
+
+    # Standard markdown destination: URL then optional title.
+    parts = text.split(None, 1)
+    return parts[0].strip() if parts else ""
+
+
 def rewrite_markdown_images(
     markdown: str,
     replace_image: Callable[[str, str, str], str],
@@ -61,7 +77,7 @@ def rewrite_markdown_images(
 
         full_match = markdown[image_start : index + 1]
         alt_text = markdown[image_start + 2 : alt_end]
-        url = markdown[destination_start:index].strip()
+        url = _parse_markdown_image_url(markdown[destination_start:index])
         rewritten_chunks.append(replace_image(alt_text, url, full_match))
         cursor = index + 1
 
