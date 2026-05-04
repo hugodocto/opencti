@@ -17,7 +17,8 @@ import conf, {
 import { AuthenticationFailure, ConfigurationError, DatabaseError, DraftLockedError, ForbiddenAccess, FunctionalError, UnsupportedError } from '../config/errors';
 import { getEntitiesListFromCache, getEntitiesMapFromCache, getEntityFromCache } from '../database/cache';
 import { elLoadBy, elRawDeleteByQuery } from '../database/engine';
-import { createEntity, createRelation, deleteElementById, deleteRelationsByFromAndTo, patchAttribute, updateAttribute, updateAttributeLockFirst, updatedInputsToData } from '../database/middleware';
+import { createEntity, createRelation, deleteElementById, deleteRelationsByFromAndTo } from '../database/middleware';
+import { patchAttribute, updateAttribute, updateAttributeLockFirst, updatedInputsToData } from '../database/middleware';
 import {
   fullEntitiesList,
   fullEntitiesThoughAggregationConnection,
