@@ -82,6 +82,7 @@ import './authenticationProvider/authenticationProvider';
 import './customView/customView';
 import './retentionRules/retentionRules';
 import './xtm/hub/news-feed/news-feed';
+import './customField/custom-field';
 
 // incomplete modules
 import './report/report';
@@ -164,4 +165,5 @@ import './dataSharing/taxiiCollection-graphql';
 import './dataSharing/feed-graphql';
 import './dataSharing/streamCollection-graphql';
 import './retentionRules/retentionRules-graphql';
+import './customField/custom-field-graphql';
 // endregion
