@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MarkerType, Node } from 'reactflow';
-import { useWorkflowInitialElements } from './useWorkflowInitialElements';
-import { WorkflowNodeType } from '../utils';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SubTypeWorkflowQuery$data } from '../../__generated__/SubTypeWorkflowQuery.graphql';
+import { WorkflowNodeType } from '../utils';
+import { useWorkflowInitialElements } from './useWorkflowInitialElements';
 
 vi.mock('@mui/styles', () => ({
   useTheme: () => ({
@@ -69,6 +69,9 @@ describe('useWorkflowInitialElements', () => {
         conditions: {},
         actions: [],
         comment: null,
+        asyncActions: [],
+        syncActions: [],
+        requiresOrganizationInput: false,
       },
     ],
   };
@@ -163,10 +166,7 @@ describe('useWorkflowInitialElements', () => {
     expect(result.current).toBe(firstResult);
 
     const newDef: SubTypeWorkflowQuery$data['workflowDefinition'] = {
-      ...mockWorkflowDefinition,
-      id: mockWorkflowDefinition!.id,
-      name: mockWorkflowDefinition!.name,
-      initialState: mockWorkflowDefinition!.initialState,
+      ...mockWorkflowDefinition!,
       states: [],
     };
     rerender({ def: newDef });
