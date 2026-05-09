@@ -53,6 +53,9 @@ const workflowResolvers = {
       return history.length > 0 ? history[history.length - 1] : null;
     },
   },
+  WorkflowSerializedTransition: {
+    from: (transition: any) => (Array.isArray(transition.from) ? transition.from : [transition.from]),
+  },
   WorkflowTransition: {
     toStatus: (transition: any) => ({ id: transition.toState, template_id: transition.toState }),
     comment: (transition: any) => transition.comment ?? null,
