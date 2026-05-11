@@ -359,7 +359,15 @@ const useGraphParser = () => {
     };
   };
 
-  return { buildGraphData, buildCorrelationData, buildNode, buildLink, buildNestedLinks, isNestedRelationship, buildGraphDataAfterRelationshipLinkToNodeConversion };
+  return {
+    buildGraphData,
+    buildCorrelationData,
+    buildNode,
+    buildLink,
+    buildNestedLinks,
+    isNestedRelationship,
+    buildGraphDataAfterRelationshipLinkToNodeConversion,
+  };
 };
 
 export default useGraphParser;
