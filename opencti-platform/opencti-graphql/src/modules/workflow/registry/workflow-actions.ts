@@ -43,6 +43,7 @@ export const ActionDefinitions: Record<string, ActionDefinition> = {
       authorized_members: z.array(z.object({
         id: z.string(),
         access_right: z.string(),
+        groups_restriction_ids: z.array(z.string()).optional(),
       })).optional(),
     }).optional(),
     allowedModes: ['sync', 'async'],
