@@ -3173,6 +3173,8 @@
   "Organizations sharing": "Organizaciones que comparten",
   "Organizations splitter": "Separador de organizaciones",
   "Origin filters only apply to live events. Recovery mode (when starting from a past date) and dependency events will ignore them.": "Los filtros de origen sólo se aplican a eventos en vivo. El modo de recuperación (cuando se parte de una fecha pasada) y los eventos de dependencia los ignorarán.",
+  "Organizations to share with": "Organizaciones con las que compartir",
+  "Organizations to unshare from": "Organizaciones con las que no compartir",
   "Origin of the case": "Origen del Caso",
   "Original creation date": "Fecha de creación original",
   "Original Value": "Valor original",

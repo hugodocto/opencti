@@ -3173,6 +3173,8 @@
   "Organizations sharing": "Совместное использование организациями",
   "Organizations splitter": "Разделитель организаций",
   "Origin filters only apply to live events. Recovery mode (when starting from a past date) and dependency events will ignore them.": "Фильтры Origin применяются только к живым событиям. Режим восстановления (при запуске с прошлой даты) и зависимые события будут их игнорировать.",
+  "Organizations to share with": "Организации, с которыми можно поделиться",
+  "Organizations to unshare from": "Организации, с которыми нужно поделиться",
   "Origin of the case": "Происхождение дела",
   "Original creation date": "Дата создания оригинала",
   "Original Value": "Исходное значение",

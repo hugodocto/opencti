@@ -3173,6 +3173,8 @@
   "Organizations sharing": "共享组织",
   "Organizations splitter": "组织分隔符",
   "Origin filters only apply to live events. Recovery mode (when starting from a past date) and dependency events will ignore them.": "起源筛选器只适用于实时事件。恢复模式（从过去的日期开始时）和依赖事件将忽略它们。",
+  "Organizations to share with": "与之分享的组织",
+  "Organizations to unshare from": "取消共享的组织",
   "Origin of the case": "案源",
   "Original creation date": "原始创建日期",
   "Original Value": "原始值",

@@ -3173,6 +3173,8 @@
   "Organizations sharing": "共有する組織",
   "Organizations splitter": "組織分離文字",
   "Origin filters only apply to live events. Recovery mode (when starting from a past date) and dependency events will ignore them.": "Originフィルタはライブイベントのみに適用されます。リカバリーモード(過去の日付から開始する場合)や依存イベントは無視されます。",
+  "Organizations to share with": "共有する組織",
+  "Organizations to unshare from": "共有解除する組織",
   "Origin of the case": "事件の発端",
   "Original creation date": "オリジナル作成日",
   "Original Value": "元の値",
