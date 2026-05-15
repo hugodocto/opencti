@@ -108,6 +108,29 @@ const createApp = async (app, schema) => {
     }
   });
 
+  // -- Disable crawling and search engine indexing of the whole platform.
+  // Applied as a global header in addition to the <meta name="robots"> tag
+  // injected in index.html and the dedicated /robots.txt and /sitemap.xml routes.
+  app.use((_req, res, next) => {
+    res.set('X-Robots-Tag', 'noindex, nofollow, noarchive, nosnippet, noimageindex');
+    next();
+  });
+
+  // -- robots.txt: disallow all crawlers on every path
+  app.get(`${basePath}/robots.txt`, (_req, res) => {
+    res.type('text/plain');
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send('User-agent: *\nDisallow: /\n');
+  });
+
+  // -- sitemap.xml: return an empty sitemap to discourage indexing
+  app.get(`${basePath}/sitemap.xml`, (_req, res) => {
+    res.type('application/xml');
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send('<?xml version="1.0" encoding="UTF-8"?>\n'
+      + '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>\n');
+  });
+
   app.use(compression({
     filter: (req, res) => res.getHeader('Content-Type') !== 'text/event-stream' && compressionFilter(req, res),
   }));
