@@ -14,6 +14,8 @@ import { CustomDashboard_workspace$key } from './__generated__/CustomDashboard_w
 import { CustomDashboardWidgetExportQuery$data } from './__generated__/CustomDashboardWidgetExportQuery.graphql';
 import { WIDGET_WORKSPACE_HOST } from './custom-dashboards-utils';
 import { CustomDashboardExportQuery$data } from './__generated__/CustomDashboardExportQuery.graphql';
+import { useEffect, useState } from 'react';
+import { Box } from '@mui/material';
 
 const dashboardExportWidgetQuery = graphql`
   query CustomDashboardWidgetExportQuery($id: String!, $widgetId: ID!) {
@@ -49,6 +51,7 @@ const dashboardFragment = graphql`
     name
     description
     manifest
+    refresh_rate
     tags
     owner {
       id
@@ -147,6 +150,37 @@ const CustomDashboard = ({ data, noToolbar = false }: CustomDashboardProps) => {
   });
   const { handleAddWidget, handleImportWidget, handleDateChange, config } = helpers;
   const handleExport = getDashboardExportHandler({ onExport, configType: 'dashboard', entity: workspace });
+
+  const refreshRate = workspace.refresh_rate ? workspace.refresh_rate * 1000 : null;
+  const [lastRefreshTime, setLastRefreshTime] = useState(new Date());
+  const [timeAgoText, setTimeAgoText] = useState('');
+
+  const formatTimeAgo = (date) => {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin === 0) return 'just now';
+    if (diffMin < 60) return `${diffMin} min ago`;
+    const diffHours = Math.floor(diffMin / 60);
+    return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+  };
+
+  useEffect(() => {
+    setTimeAgoText(formatTimeAgo(lastRefreshTime));
+    const interval = setInterval(() => {
+      setTimeAgoText(formatTimeAgo(lastRefreshTime));
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [lastRefreshTime]);
+
+  useEffect(() => {
+    if (!refreshRate) return;
+    const interval = setInterval(() => {
+      setLastRefreshTime(new Date());
+    }, refreshRate);
+    return () => clearInterval(interval);
+  }, [refreshRate]);
+
   return (
     <Stack gap={2}>
       {!noToolbar && (
@@ -162,10 +196,15 @@ const CustomDashboard = ({ data, noToolbar = false }: CustomDashboardProps) => {
             needs={[EXPLORE_EXUPDATE, INVESTIGATION_INUPDATE]}
             hasAccess={userCanEdit}
           >
-            <DashboardTimeFilters
-              config={config}
-              handleDateChange={handleDateChange}
-            />
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <DashboardTimeFilters
+                config={config}
+                handleDateChange={handleDateChange}
+              />
+              <Box sx={{ color: 'text.secondary', marginRight: 3 }}>
+                Last refreshed: {timeAgoText}
+              </Box>
+            </Box>
           </Security>
         </Stack>
       )
@@ -175,6 +214,7 @@ const CustomDashboard = ({ data, noToolbar = false }: CustomDashboardProps) => {
         isEditable={userCanEdit}
         entity={workspace}
         host={WIDGET_WORKSPACE_HOST}
+        refreshRate={refreshRate}
       />
     </Stack>
   );
