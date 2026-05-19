@@ -92,7 +92,7 @@
     "ajv-formats": "3.0.1",
     "amqplib": "1.2.0",
     "antlr4": "4.13.2",
-    "archiver": "7.0.1",
+    "archiver": "8.0.0",
     "archiver-zip-encrypted": "2.0.0",
     "async-lock": "1.4.1",
     "aws-sdk-v3-proxy": "2.2.0",
