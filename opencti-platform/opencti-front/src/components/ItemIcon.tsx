@@ -244,6 +244,8 @@ const iconSelector = (
       );
     case 'all-users':
     case 'dynamic options':
+    case 'dynamic from context':
+    case 'dynamic from draft':
       return (
         <AccountGroupOutline style={style} fontSize={fontSize} role="img" />
       );
