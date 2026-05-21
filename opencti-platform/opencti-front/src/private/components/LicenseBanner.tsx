@@ -79,7 +79,7 @@ const computeBannerInfo = (eeSettings: RootSettings$data['platform_enterprise_ed
     };
   }
   if (eeSettings.license_type === LICENSE_OPTION_TRIAL) {
-    const remainingDays = daysBetweenDates(now(), moment(eeSettings.license_expiration_date));
+    const remainingDays = daysBetweenDates(now(), eeSettings.license_expiration_date);
     const buttonSx = getButtonSx(remainingDays);
     const bannerColor = getBannerColor(remainingDays);
     return {
