@@ -13659,6 +13659,7 @@ export type IngestionCsv = BasicObject & InternalObject & {
   parent_types: Array<Scalars['String']['output']>;
   refreshed_at?: Maybe<Scalars['DateTime']['output']>;
   scheduling_period?: Maybe<Scalars['String']['output']>;
+  ssl_verify?: Maybe<Scalars['Boolean']['output']>;
   standard_id: Scalars['String']['output'];
   toConfigurationExport: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['DateTime']['output']>;
@@ -13686,6 +13687,7 @@ export type IngestionCsvAddInput = {
   markings?: InputMaybe<Array<Scalars['String']['input']>>;
   name: Scalars['String']['input'];
   scheduling_period?: InputMaybe<Scalars['String']['input']>;
+  ssl_verify?: InputMaybe<Scalars['Boolean']['input']>;
   uri: Scalars['String']['input'];
   user_id: Scalars['String']['input'];
 };
@@ -13746,6 +13748,7 @@ export type IngestionJson = BasicObject & InternalObject & {
   query_attributes?: Maybe<Array<IngestionQueryAttribute>>;
   refreshed_at?: Maybe<Scalars['DateTime']['output']>;
   scheduling_period?: Maybe<Scalars['String']['output']>;
+  ssl_verify?: Maybe<Scalars['Boolean']['output']>;
   standard_id: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['DateTime']['output']>;
   uri: Scalars['String']['output'];
@@ -13770,6 +13773,7 @@ export type IngestionJsonAddInput = {
   pagination_with_sub_page_query_verb?: InputMaybe<Scalars['String']['input']>;
   query_attributes?: InputMaybe<Array<QueryAttribute>>;
   scheduling_period?: InputMaybe<Scalars['String']['input']>;
+  ssl_verify?: InputMaybe<Scalars['Boolean']['input']>;
   uri: Scalars['String']['input'];
   user_id: Scalars['String']['input'];
   verb: Scalars['String']['input'];
@@ -13824,6 +13828,7 @@ export type IngestionRss = BasicObject & InternalObject & {
   refreshed_at?: Maybe<Scalars['DateTime']['output']>;
   report_types?: Maybe<Array<Scalars['String']['output']>>;
   scheduling_period?: Maybe<Scalars['String']['output']>;
+  ssl_verify?: Maybe<Scalars['Boolean']['output']>;
   standard_id: Scalars['String']['output'];
   toConfigurationExport: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['DateTime']['output']>;
@@ -13847,6 +13852,7 @@ export type IngestionRssAddInput = {
   object_marking_refs?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
   report_types?: InputMaybe<Array<Scalars['String']['input']>>;
   scheduling_period?: InputMaybe<Scalars['String']['input']>;
+  ssl_verify?: InputMaybe<Scalars['Boolean']['input']>;
   uri: Scalars['String']['input'];
   user_id: Scalars['String']['input'];
 };
@@ -13901,6 +13907,7 @@ export type IngestionTaxii = BasicObject & InternalObject & {
   parent_types: Array<Scalars['String']['output']>;
   refreshed_at?: Maybe<Scalars['DateTime']['output']>;
   scheduling_period?: Maybe<Scalars['String']['output']>;
+  ssl_verify?: Maybe<Scalars['Boolean']['output']>;
   standard_id: Scalars['String']['output'];
   toConfigurationExport: Scalars['String']['output'];
   updated_at?: Maybe<Scalars['DateTime']['output']>;
@@ -13927,6 +13934,7 @@ export type IngestionTaxiiAddInput = {
   ingestion_running?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
   scheduling_period?: InputMaybe<Scalars['String']['input']>;
+  ssl_verify?: InputMaybe<Scalars['Boolean']['input']>;
   uri: Scalars['String']['input'];
   user_id: Scalars['String']['input'];
   version: TaxiiVersion;
@@ -45433,6 +45441,7 @@ export type IngestionCsvResolvers<ContextType = any, ParentType extends Resolver
   parent_types?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   refreshed_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   scheduling_period?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ssl_verify?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   standard_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   toConfigurationExport?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -45480,6 +45489,7 @@ export type IngestionJsonResolvers<ContextType = any, ParentType extends Resolve
   query_attributes?: Resolver<Maybe<Array<ResolversTypes['IngestionQueryAttribute']>>, ParentType, ContextType>;
   refreshed_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   scheduling_period?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ssl_verify?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   standard_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   uri?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -45525,6 +45535,7 @@ export type IngestionRssResolvers<ContextType = any, ParentType extends Resolver
   refreshed_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   report_types?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   scheduling_period?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ssl_verify?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   standard_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   toConfigurationExport?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
@@ -45571,6 +45582,7 @@ export type IngestionTaxiiResolvers<ContextType = any, ParentType extends Resolv
   parent_types?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>;
   refreshed_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   scheduling_period?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  ssl_verify?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   standard_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   toConfigurationExport?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   updated_at?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
