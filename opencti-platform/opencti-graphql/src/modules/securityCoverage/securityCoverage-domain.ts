@@ -22,6 +22,7 @@ import {
 } from '../../schema/stixDomainObject';
 import { ENTITY_TYPE_CONTAINER_CASE_INCIDENT } from '../case/case-incident/case-incident-types';
 import { ENTITY_TYPE_CONTAINER_GROUPING } from '../grouping/grouping-types';
+import { ENTITY_TYPE_SECURITY_COVERAGE_RESULT, INPUT_RESULT_OF } from './securityCoverageResult/securityCoverageResult-types';
 
 export const COVERED_ENTITIES_TYPE = [
   ENTITY_TYPE_INTRUSION_SET,
@@ -46,9 +47,68 @@ export const findSecurityCoverageByCoveredId = async (context: AuthContext, user
   return loadEntityThroughRelationsPaginated<BasicStoreEntitySecurityCoverage>(context, user, coveredId, RELATION_COVERED, ABSTRACT_STIX_DOMAIN_OBJECT, true);
 };
 
-export const addSecurityCoverage = async (context: AuthContext, user: AuthUser, securityCoverageInput: SecurityCoverageAddInput) => {
-  const created = await createEntity(context, user, securityCoverageInput, ENTITY_TYPE_SECURITY_COVERAGE);
-  return notify(BUS_TOPICS[ENTITY_TYPE_SECURITY_COVERAGE].EDIT_TOPIC, created, user);
+export const addSecurityCoverage = async (
+  context: AuthContext,
+  user: AuthUser,
+  securityCoverageInput: SecurityCoverageAddInput,
+) => {
+  const {
+    coverage_information,
+    coverage_last_result,
+    coverage_valid_from,
+    coverage_valid_to,
+    external_uri,
+    ...onlySecurityCoverageInput
+  } = securityCoverageInput;
+  const createdSecurityCoverage: BasicStoreEntitySecurityCoverage = await createEntity(
+    context,
+    user,
+    onlySecurityCoverageInput,
+    ENTITY_TYPE_SECURITY_COVERAGE,
+  );
+
+  if (external_uri || (coverage_information ?? []).length > 0) {
+    const {
+      confidence,
+      created,
+      createdBy,
+      fileMarkings,
+      filesMarkings,
+      modified,
+      objectLabel,
+      objectMarking,
+      x_opencti_modified_at,
+    } = onlySecurityCoverageInput;
+    const securityCoverageResultInput = {
+      [INPUT_RESULT_OF]: createdSecurityCoverage.id,
+      coverage_information,
+      coverage_last_result,
+      coverage_valid_from,
+      coverage_valid_to,
+      external_uri,
+      confidence,
+      created,
+      createdBy,
+      fileMarkings,
+      filesMarkings,
+      modified,
+      objectLabel,
+      objectMarking,
+      x_opencti_modified_at,
+    };
+    await createEntity(
+      context,
+      user,
+      securityCoverageResultInput,
+      ENTITY_TYPE_SECURITY_COVERAGE_RESULT,
+    );
+  }
+
+  return notify(
+    BUS_TOPICS[ENTITY_TYPE_SECURITY_COVERAGE].EDIT_TOPIC,
+    createdSecurityCoverage,
+    user,
+  );
 };
 
 export const securityCoverageStixBundle = async (context: AuthContext, user: AuthUser, SecurityCoverageId: string) => {
