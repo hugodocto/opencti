@@ -1,17 +1,17 @@
 import { afterAll, beforeAll, describe, it, expect, vi } from 'vitest';
 import gql from 'graphql-tag';
-import { addIngestionCsv, deleteIngestionCsv, ingestionCsvAddAutoUser } from '../../../src/modules/ingestion/ingestion-csv-domain';
-import { PLATFORM_ORGANIZATION, USER_EDITOR } from '../../utils/testQuery';
-import { queryAsAdmin } from '../../utils/testQueryHelper';
-import { type EditInput, IngestionAuthType, type IngestionCsv, type IngestionCsvAddAutoUserInput, type IngestionCsvAddInput } from '../../../src/generated/graphql';
-import { unSetOrganization, setOrganization } from '../../utils/testQueryHelper';
-import { getFakeAuthUser, getOrganizationEntity } from '../../utils/domainQueryHelper';
-import type { AuthContext, AuthUser } from '../../../src/types/user';
-import { findDefaultIngestionGroups, groupEditField } from '../../../src/domain/group';
-import type { BasicGroupEntity } from '../../../src/types/store';
-import { findById as findUserById } from '../../../src/domain/user';
-import { executionContext, SYSTEM_USER } from '../../../src/utils/access';
-import * as entrepriseEdition from '../../../src/enterprise-edition/ee';
+import { addIngestionCsv, deleteIngestionCsv, ingestionCsvAddAutoUser } from '../../../../src/modules/ingestion/ingestion-csv-domain';
+import { PLATFORM_ORGANIZATION, USER_EDITOR } from '../../../utils/testQuery';
+import { queryAsAdmin } from '../../../utils/testQueryHelper';
+import { type EditInput, IngestionAuthType, type IngestionCsv, type IngestionCsvAddAutoUserInput, type IngestionCsvAddInput } from '../../../../src/generated/graphql';
+import { unSetOrganization, setOrganization } from '../../../utils/testQueryHelper';
+import { getFakeAuthUser, getOrganizationEntity } from '../../../utils/domainQueryHelper';
+import type { AuthContext, AuthUser } from '../../../../src/types/user';
+import { findDefaultIngestionGroups, groupEditField } from '../../../../src/domain/group';
+import type { BasicGroupEntity } from '../../../../src/types/store';
+import { findById as findUserById } from '../../../../src/domain/user';
+import { executionContext, SYSTEM_USER } from '../../../../src/utils/access';
+import * as entrepriseEdition from '../../../../src/enterprise-edition/ee';
 
 const DELETE_USER_QUERY = gql`
   mutation userDelete($id: ID!) {
