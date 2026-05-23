@@ -1034,27 +1034,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@datadog/pprof@npm:5.14.1":
-  version: 5.14.1
-  resolution: "@datadog/pprof@npm:5.14.1"
+"@datadog/pprof@npm:5.14.3":
+  version: 5.14.3
+  resolution: "@datadog/pprof@npm:5.14.3"
   dependencies:
     node-gyp: "npm:latest"
-    node-gyp-build: "npm:<4.0"
+    node-gyp-build: "npm:<5.0"
     pprof-format: "npm:^2.2.1"
     source-map: "npm:^0.7.4"
-  checksum: 10c0/6a56b6a5a50902ab47e77e7581fcfb982d63ae79e86d0daeb606f6284c695b2670d3406a53822bebbf0fbae16d1d5cdf79bd6b3ff6c140751485ca94031d6376
+  checksum: 10c0/803bcf7751d9fd9e1f11dfe4c0c030dd99cd2337c44cb790bb268745ee56a4ff71b72a1a62ad521a2d177b6064a111d01db35bd1094cc53f405a00dafcf842e5
   languageName: node
   linkType: hard
 
-"@datadog/pprof@patch:@datadog/pprof@5.14.1#./patch/@datadog-pprof.patch::locator=opencti-graphql%40workspace%3A.":
-  version: 5.14.1
-  resolution: "@datadog/pprof@patch:@datadog/pprof@npm%3A5.14.1#./patch/@datadog-pprof.patch::version=5.14.1&hash=fbd351&locator=opencti-graphql%40workspace%3A."
+"@datadog/pprof@patch:@datadog/pprof@5.14.3#./patch/@datadog-pprof.patch::locator=opencti-graphql%40workspace%3A.":
+  version: 5.14.3
+  resolution: "@datadog/pprof@patch:@datadog/pprof@npm%3A5.14.3#./patch/@datadog-pprof.patch::version=5.14.3&hash=fbd351&locator=opencti-graphql%40workspace%3A."
   dependencies:
     node-gyp: "npm:latest"
-    node-gyp-build: "npm:<4.0"
+    node-gyp-build: "npm:<5.0"
     pprof-format: "npm:^2.2.1"
     source-map: "npm:^0.7.4"
-  checksum: 10c0/7dd0c5d662956888d56ddcf19262e7e1898a7dca6bb3edf2a88073c822254bba9d52cf4be064cd0847f3ee76043b83afc7dcb014ab5eee6f5204e6c5b563a78e
+  checksum: 10c0/d16bfd0925fbe49f46c19169257709624993574ad9e37464f2bc40b780f459d88887f478936497a22cd028e9356c191d52152f1ca424c75c28a5e8d50ea97ca8
   languageName: node
   linkType: hard
 
@@ -9385,14 +9385,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp-build@npm:<4.0":
-  version: 3.9.0
-  resolution: "node-gyp-build@npm:3.9.0"
+"node-gyp-build@npm:<5.0":
+  version: 4.8.4
+  resolution: "node-gyp-build@npm:4.8.4"
   bin:
-    node-gyp-build: ./bin.js
-    node-gyp-build-optional: ./optional.js
-    node-gyp-build-test: ./build-test.js
-  checksum: 10c0/0e7e39e5746728e6adf58803d9c3c732b6107f1af3df5128c4c2a6c9c0fb99a6c981ad0a7514d707adccbcfe303b4a92da7949408f1d3ec281f70d37bec29f60
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 10c0/444e189907ece2081fe60e75368784f7782cfddb554b60123743dfb89509df89f1f29c03bbfa16b3a3e0be3f48799a4783f487da6203245fa5bed239ba7407e1
   languageName: node
   linkType: hard
 
@@ -9702,7 +9702,7 @@ __metadata:
     "@aws-sdk/client-sts": "npm:3.1046.0"
     "@aws-sdk/credential-provider-node": "npm:3.972.40"
     "@aws-sdk/lib-storage": "npm:3.1046.0"
-    "@datadog/pprof": "npm:5.14.1"
+    "@datadog/pprof": "npm:5.14.3"
     "@elastic/elasticsearch": "npm:8.19.1"
     "@escape.tech/graphql-armor": "npm:3.2.0"
     "@eslint/js": "npm:10.0.1"
