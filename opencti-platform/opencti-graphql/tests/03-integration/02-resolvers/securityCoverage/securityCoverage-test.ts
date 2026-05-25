@@ -19,8 +19,7 @@ const CREATE_QUERY = gql`
 `;
 
 describe('SecurityCoverage resolver', () => {
-  // TODO remove skip at last chunk
-  it.skip('should create SecurityCoverage with correct coverage information', async () => {
+  it('should create SecurityCoverage with correct coverage information', async () => {
     const SECURITY_COVERAGE = {
       input: {
         name: 'SC name',
