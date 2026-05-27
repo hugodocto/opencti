@@ -37845,6 +37845,15 @@ export type WorkflowInstance = {
   pendingTransition?: Maybe<WorkflowPendingTransition>;
 };
 
+export type WorkflowLastHistoryEntry = {
+  __typename?: 'WorkflowLastHistoryEntry';
+  comment?: Maybe<Scalars['String']['output']>;
+  event: Scalars['String']['output'];
+  state: Scalars['String']['output'];
+  timestamp: Scalars['String']['output'];
+  user_id: Scalars['String']['output'];
+};
+
 export type WorkflowPendingAsyncAction = {
   __typename?: 'WorkflowPendingAsyncAction';
   errors?: Maybe<Array<WorkflowActionError>>;
@@ -37867,15 +37876,6 @@ export type WorkflowPendingTransition = {
   triggeredAt: Scalars['DateTime']['output'];
 };
 
-export type WorkflowLastHistoryEntry = {
-  __typename?: 'WorkflowLastHistoryEntry';
-  comment?: Maybe<Scalars['String']['output']>;
-  event: Scalars['String']['output'];
-  state: Scalars['String']['output'];
-  timestamp: Scalars['String']['output'];
-  user_id: Scalars['String']['output'];
-};
-
 export type WorkflowSchema = {
   __typename?: 'WorkflowSchema';
   id: Scalars['ID']['output'];
@@ -37895,8 +37895,8 @@ export type WorkflowSerializedState = {
 export type WorkflowSerializedTransition = {
   __typename?: 'WorkflowSerializedTransition';
   actions?: Maybe<Array<WorkflowActionConfig>>;
-  comment?: Maybe<Scalars['String']['output']>;
   asyncActions?: Maybe<Array<WorkflowActionConfig>>;
+  comment?: Maybe<Scalars['String']['output']>;
   conditions?: Maybe<Scalars['JSON']['output']>;
   event: Scalars['String']['output'];
   from: Scalars['String']['output'];
@@ -52629,8 +52629,8 @@ export type WorkflowSerializedStateResolvers<ContextType = any, ParentType exten
 
 export type WorkflowSerializedTransitionResolvers<ContextType = any, ParentType extends ResolversParentTypes['WorkflowSerializedTransition'] = ResolversParentTypes['WorkflowSerializedTransition']> = ResolversObject<{
   actions?: Resolver<Maybe<Array<ResolversTypes['WorkflowActionConfig']>>, ParentType, ContextType>;
-  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   asyncActions?: Resolver<Maybe<Array<ResolversTypes['WorkflowActionConfig']>>, ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   conditions?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
   event?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   from?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
