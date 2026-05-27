@@ -1,7 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import workflowResolvers from '../../../src/modules/workflow/api/workflow-resolvers';
 import {
-  getAllowedNextStatuses,
   getAllowedTransitions,
   triggerWorkflowEvent,
 } from '../../../src/modules/workflow/domain/workflow-domain';
@@ -9,7 +8,6 @@ import {
 vi.mock('../../../src/modules/workflow/domain/workflow-domain', () => ({
   getWorkflowDefinition: vi.fn(),
   getWorkflowInstance: vi.fn(),
-  getAllowedNextStatuses: vi.fn(),
   getAllowedTransitions: vi.fn(),
   setWorkflowDefinition: vi.fn(),
   deleteWorkflowDefinition: vi.fn(),
@@ -179,33 +177,6 @@ describe('WorkflowTriggerResult resolver – status field', () => {
     const triggerResult = { instance: {}, entity: {} };
     const status = workflowResolvers.WorkflowTriggerResult.status(triggerResult);
     expect(status).toBeNull();
-  });
-});
-
-// ---------------------------------------------------------------------------
-// Query.allowedNextStatuses
-// ---------------------------------------------------------------------------
-
-describe('Query.allowedNextStatuses resolver', () => {
-  it('should delegate to getAllowedNextStatuses and return the result', async () => {
-    const mockStatuses = [
-      { id: 'status-2', template_id: 'status-2' },
-      { id: 'status-3', template_id: 'status-3' },
-    ];
-    (getAllowedNextStatuses as any).mockResolvedValue(mockStatuses);
-
-    const result = await workflowResolvers.Query.allowedNextStatuses({}, { entityId: 'entity-id' }, mockContext);
-
-    expect(getAllowedNextStatuses).toHaveBeenCalledWith(mockContext, mockContext.user, 'entity-id');
-    expect(result).toEqual(mockStatuses);
-  });
-
-  it('should return an empty array when no next statuses are available', async () => {
-    (getAllowedNextStatuses as any).mockResolvedValue([]);
-
-    const result = await workflowResolvers.Query.allowedNextStatuses({}, { entityId: 'entity-id' }, mockContext);
-
-    expect(result).toEqual([]);
   });
 });
 
