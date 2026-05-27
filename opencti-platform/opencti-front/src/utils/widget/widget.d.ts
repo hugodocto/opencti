@@ -46,6 +46,7 @@ export interface WidgetDataSelection {
   sort_mode?: string | null;
   field?: string;
   relationship_type?: string;
+  layout?: '1' | '2' | null;
 }
 
 type GqlWidgetDataSelection = WidgetDataSelection & {
