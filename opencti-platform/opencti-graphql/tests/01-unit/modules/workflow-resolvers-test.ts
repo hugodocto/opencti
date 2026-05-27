@@ -121,6 +121,7 @@ describe('Mutation.triggerWorkflowEvent resolver – comment forwarding', () => 
       'entity-id',
       'review',
       'Approved for review',
+      {},
     );
   });
 
@@ -139,6 +140,7 @@ describe('Mutation.triggerWorkflowEvent resolver – comment forwarding', () => 
       'entity-id',
       'review',
       undefined,
+      {},
     );
   });
 });
@@ -210,7 +212,7 @@ describe('Mutation.triggerWorkflowEvent resolver – comment validation', () => 
     ).resolves.not.toThrow();
 
     expect(triggerWorkflowEvent).toHaveBeenCalledWith(
-      mockContext, mockContext.user, 'entity-id', 'review', exactComment,
+      mockContext, mockContext.user, 'entity-id', 'review', exactComment, {},
     );
   });
 
@@ -224,7 +226,7 @@ describe('Mutation.triggerWorkflowEvent resolver – comment validation', () => 
     );
 
     expect(triggerWorkflowEvent).toHaveBeenCalledWith(
-      mockContext, mockContext.user, 'entity-id', 'review', 'trimmed comment',
+      mockContext, mockContext.user, 'entity-id', 'review', 'trimmed comment', {},
     );
   });
 
@@ -238,7 +240,7 @@ describe('Mutation.triggerWorkflowEvent resolver – comment validation', () => 
     );
 
     expect(triggerWorkflowEvent).toHaveBeenCalledWith(
-      mockContext, mockContext.user, 'entity-id', 'review', undefined,
+      mockContext, mockContext.user, 'entity-id', 'review', undefined, {},
     );
   });
 
