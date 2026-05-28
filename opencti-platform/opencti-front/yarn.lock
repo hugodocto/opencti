@@ -13127,7 +13127,7 @@ __metadata:
     react-otp-input: "npm:3.1.1"
     react-pdf: "npm:10.4.1"
     react-rectangle-selection: "npm:1.0.4"
-    react-relay: "npm:20.1.1"
+    react-relay: "npm:21.0.0"
     react-relay-network-modern: "npm:6.2.2"
     react-router-dom: "npm:6.30.3"
     react-syntax-highlighter: "npm:16.1.1"
@@ -14385,18 +14385,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-relay@npm:20.1.1":
-  version: 20.1.1
-  resolution: "react-relay@npm:20.1.1"
+"react-relay@npm:21.0.0":
+  version: 21.0.0
+  resolution: "react-relay@npm:21.0.0"
   dependencies:
     "@babel/runtime": "npm:^7.25.0"
     fbjs: "npm:^3.0.2"
     invariant: "npm:^2.2.4"
     nullthrows: "npm:^1.1.1"
-    relay-runtime: "npm:20.1.1"
+    relay-runtime: "npm:21.0.0"
   peerDependencies:
     react: ^16.9.0 || ^17 || ^18 || ^19
-  checksum: 10c0/c2f6c3f3d45394efebd79d5583d0a980b57c6f7fbaf2781caa9674ee1d2469f70bdf896ef3797c33e17356af6c9e70104d2108e63861d50995ac412979b31820
+  checksum: 10c0/04b754186856e8af69ced64838bd08e7045ec7d76fcb241d24954c4d64091c11d9df1a5b8a24321f5d6fa846383230aefc3896bc29bc1d9ed589979440b2df45
   languageName: node
   linkType: hard
 
@@ -14816,6 +14816,17 @@ __metadata:
     fbjs: "npm:^3.0.2"
     invariant: "npm:^2.2.4"
   checksum: 10c0/c12bc83902f6b93f9f2f855f6dd2c16ae4aaa3915c79819b6d5ab923c025856f43763959bea6054826f9d6f1f8006df09f260eb5b6bead8c4b20f79304fbae86
+  languageName: node
+  linkType: hard
+
+"relay-runtime@npm:21.0.0":
+  version: 21.0.0
+  resolution: "relay-runtime@npm:21.0.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.25.0"
+    fbjs: "npm:^3.0.2"
+    invariant: "npm:^2.2.4"
+  checksum: 10c0/b002d723bf5f2a971ec38056fe3e3555693ac1e2f65c45c2677c85261f0a2b80fca98faee0050bf0e308867998fee7202707746c0da4a258a810065c1ffc3f59
   languageName: node
   linkType: hard
 
