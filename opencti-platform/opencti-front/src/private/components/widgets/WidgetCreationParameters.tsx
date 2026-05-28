@@ -13,7 +13,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { InformationOutline } from 'mdi-material-ui';
 import React, { useState } from 'react';
 import { StixCyberObservablesLinesAttributesQuery$data } from '@components/observations/stix_cyber_observables/__generated__/StixCyberObservablesLinesAttributesQuery.graphql';
-import WidgetColumnsCustomizationInput, { WidgetColumnsLayout } from '@components/widgets/WidgetColumnsCustomizationInput';
+import WidgetColumnsCustomizationInput from '@components/widgets/WidgetColumnsCustomizationInput';
 import { getCustomAttributesColumns, getDefaultCustomAttributesColumns, getDefaultWidgetColumns, getWidgetColumns } from '@components/widgets/WidgetListsDefaultColumns';
 import { useWidgetConfigContext } from '@components/widgets/WidgetConfigContext';
 import useWidgetConfigValidateForm from '@components/widgets/useWidgetConfigValidateForm';
@@ -31,6 +31,7 @@ import { getCurrentAvailableParameters, getCurrentCategory, getCurrentIsRelation
 import EntitySelectWithTypes from '../../../components/fields/EntitySelectWithTypes';
 import { FilterGroup } from '../../../utils/filters/filtersHelpers-types';
 import useAuth from '../../../utils/hooks/useAuth';
+import WidgetCustomAttributesColumnsInput, { WidgetColumnsLayout } from '@components/widgets/WidgetCustomAttributesColumnsInput';
 
 const WidgetCreationParameters = () => {
   const { metricsDefinition } = useAttributes();
@@ -844,8 +845,7 @@ const WidgetCreationParameters = () => {
             return null;
           })}
         {getCurrentCategory(type) === 'custom-attributes' && (
-          <WidgetColumnsCustomizationInput
-            isCustomView
+          <WidgetCustomAttributesColumnsInput
             layout={dataSelection[0]?.layout ?? '1'}
             onLayoutChange={(newLayout) => setLayout(0, newLayout)}
             availableColumns={getCustomAttributesColumns(getCurrentSelectedEntityTypes(0)[0])}
