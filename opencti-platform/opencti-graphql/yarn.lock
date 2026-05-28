@@ -9609,7 +9609,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:6.38.0, openai@npm:^6.37.0":
+"openai@npm:6.39.0":
+  version: 6.39.0
+  resolution: "openai@npm:6.39.0"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.25 || ^4.0
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10c0/cc3d07840795be58776b5a4b372d53d3acab88298022a1191cc9471bfd06401663488113ff3002b6c2b89011270969328608dccbf53100357461da71004cb385
+  languageName: node
+  linkType: hard
+
+"openai@npm:^6.37.0":
   version: 6.38.0
   resolution: "openai@npm:6.38.0"
   peerDependencies:
@@ -9762,7 +9779,7 @@ __metadata:
     node-fetch: "npm:3.3.2"
     node-forge: "npm:1.4.0"
     nodemailer: "npm:8.0.7"
-    openai: "npm:6.38.0"
+    openai: "npm:6.39.0"
     openid-client: "npm:6.8.4"
     openid-clientv5: "npm:openid-client@5.7.1"
     opentelemetry-node-metrics: "npm:3.0.0"
