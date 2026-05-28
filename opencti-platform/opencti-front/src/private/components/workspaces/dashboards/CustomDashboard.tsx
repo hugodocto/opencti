@@ -201,9 +201,11 @@ const CustomDashboard = ({ data, noToolbar = false }: CustomDashboardProps) => {
                 config={config}
                 handleDateChange={handleDateChange}
               />
-              <Box sx={{ color: 'text.secondary', marginRight: 3 }}>
-                {t_i18n('Last refreshed')}: {timeAgoText}
-              </Box>
+              {refreshRate && (
+                  <Box sx={{ color: 'text.secondary', marginRight: 3 }}>
+                    {t_i18n('Last refreshed')}: {timeAgoText}
+                  </Box>
+              )}
             </Box>
           </Security>
         </Stack>
