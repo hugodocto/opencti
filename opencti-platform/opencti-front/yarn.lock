@@ -4139,9 +4139,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rjsf/core@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@rjsf/core@npm:6.5.2"
+"@rjsf/core@npm:6.5.3":
+  version: 6.5.3
+  resolution: "@rjsf/core@npm:6.5.3"
   dependencies:
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
@@ -4150,13 +4150,13 @@ __metadata:
   peerDependencies:
     "@rjsf/utils": ^6.5.x
     react: ">=18"
-  checksum: 10c0/572ac389dae9e53e7ebcb9d0791f6c11120c5537826d41d922bbc8327551c392ed6bc45652dba758e00a884474aa460c0703048f1a8800ef6ec98275b725eff5
+  checksum: 10c0/2a6654ddfec84091ee171953017816fd39080c55444b5eb1e28200a1e2cc097d785a32e87049ffe2d09da745ae7f298983317541b7efa06cb987c4436618a064
   languageName: node
   linkType: hard
 
-"@rjsf/mui@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@rjsf/mui@npm:6.5.2"
+"@rjsf/mui@npm:6.5.3":
+  version: 6.5.3
+  resolution: "@rjsf/mui@npm:6.5.3"
   peerDependencies:
     "@emotion/react": ^11.7.0
     "@emotion/styled": ^11.6.0
@@ -4165,30 +4165,30 @@ __metadata:
     "@rjsf/core": ^6.5.x
     "@rjsf/utils": ^6.5.x
     react: ">=18"
-  checksum: 10c0/46531523ab7cc331b8f08c85a198920714cdaf525262e542df6143c8a704273b09c7e858b0adef9ea3080cdfbb31942777c3024324b6928e506f0f8c2c3fbd19
+  checksum: 10c0/edcfcbbb5e2a0ca5ce5971c5d5f8bbb5e3b8bb2752a5554704d7e28161102c53aeb07c016b97ad6718dac68726dc496264d8f765f9fce5978624becedbc43e26
   languageName: node
   linkType: hard
 
-"@rjsf/utils@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@rjsf/utils@npm:6.5.2"
+"@rjsf/utils@npm:6.5.3":
+  version: 6.5.3
+  resolution: "@rjsf/utils@npm:6.5.3"
   dependencies:
     "@x0k/json-schema-merge": "npm:^1.0.3"
     fast-equals: "npm:^6.0.0"
-    fast-uri: "npm:^3.1.0"
+    fast-uri: "npm:^3.1.2"
     jsonpointer: "npm:^5.0.1"
     lodash: "npm:^4.18.1"
     lodash-es: "npm:^4.18.1"
     react-is: "npm:^18.3.1"
   peerDependencies:
     react: ">=18"
-  checksum: 10c0/f14e008a9e3da2e62708cbcde119eb136d3efe3d2e89c636ecd78fbafa9b3009273fd026050d793d0995c62cde7ceaac1da98a565f0b93254a1425298fece555
+  checksum: 10c0/1a01c578c6ade436ae727d259c37b3e4e24f782e4b29275ade402332c8830a95e02a27f77828cf8eb2c669154962f29c87cfa25293bf82fb20b1f70bdd469187
   languageName: node
   linkType: hard
 
-"@rjsf/validator-ajv8@npm:6.5.2":
-  version: 6.5.2
-  resolution: "@rjsf/validator-ajv8@npm:6.5.2"
+"@rjsf/validator-ajv8@npm:6.5.3":
+  version: 6.5.3
+  resolution: "@rjsf/validator-ajv8@npm:6.5.3"
   dependencies:
     ajv: "npm:^8.18.0"
     ajv-formats: "npm:^2.1.1"
@@ -4196,7 +4196,7 @@ __metadata:
     lodash-es: "npm:^4.18.1"
   peerDependencies:
     "@rjsf/utils": ^6.5.x
-  checksum: 10c0/3bcaffd9462fa2631e03f2561c8da8d510fff3abb9e057d553f663abe1d7447ac257991c1a6007846971897692a7170498e6aebcfa958d073e1b3b98a6368781
+  checksum: 10c0/9c288beb5ed10d4fd825d6a179def78b477f0095e572c29567ff27db0a5200ad83bf6689636320a4afe526c85385a4b7dc5b8725c8169836cfbd20cd86738dce
   languageName: node
   linkType: hard
 
@@ -9045,7 +9045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-uri@npm:^3.0.1, fast-uri@npm:^3.1.0":
+"fast-uri@npm:^3.0.1, fast-uri@npm:^3.1.2":
   version: 3.1.2
   resolution: "fast-uri@npm:3.1.2"
   checksum: 10c0/5b35641895959f3f7ab7a7b1b5542bded159346f25ec9f256817b206d50b64eda5828e90d605a2e2fc645c90519a7259c2bab2c942ee728c88b88e5be21b090d
@@ -13005,10 +13005,10 @@ __metadata:
     "@mui/styles": "npm:6.5.0"
     "@mui/x-date-pickers": "npm:7.29.4"
     "@playwright/test": "npm:1.60.0"
-    "@rjsf/core": "npm:6.5.2"
-    "@rjsf/mui": "npm:6.5.2"
-    "@rjsf/utils": "npm:6.5.2"
-    "@rjsf/validator-ajv8": "npm:6.5.2"
+    "@rjsf/core": "npm:6.5.3"
+    "@rjsf/mui": "npm:6.5.3"
+    "@rjsf/utils": "npm:6.5.3"
+    "@rjsf/validator-ajv8": "npm:6.5.3"
     "@stylistic/eslint-plugin": "npm:5.10.0"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
