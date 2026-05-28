@@ -36,7 +36,6 @@ export const listSecurityCoverageResultsByResultOf = async (
             operator: FilterOperator.Eq,
             key: [INPUT_RESULT_OF],
             values: [resultOfId],
-
           },
         ],
       },

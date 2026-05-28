@@ -143,6 +143,9 @@ export const schemaRelationsRefDefinition = {
   },
 
   isMultipleDatabaseName(entityType: string, databaseName: string): boolean {
+    console.log('===================');
+    console.log(entityType, databaseName, this.databaseNameMultipleCache.get(this.selectEntityType(entityType)));
+    console.log('===================');
     return this.databaseNameMultipleCache.get(this.selectEntityType(entityType))?.includes(databaseName) ?? false;
   },
 

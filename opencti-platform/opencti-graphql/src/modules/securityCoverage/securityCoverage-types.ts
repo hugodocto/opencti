@@ -15,7 +15,7 @@ export interface BasicStoreEntitySecurityCoverage extends BasicStoreEntity {
   type_affinity: string;
   platforms_affinity: string[];
   [RELATION_COVERED]: string;
-  [RELATION_RESULT_OF]: string | undefined;
+  [RELATION_RESULT_OF]: string[] | undefined;
 }
 
 export interface StoreEntitySecurityCoverage extends StoreEntity {
