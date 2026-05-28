@@ -1,10 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { addSecurityCoverage, findSecurityCoverageById, securityCoverageDelete } from '../../../src/modules/securityCoverage/securityCoverage-domain';
+import { addSecurityCoverage, securityCoverageDelete } from '../../../src/modules/securityCoverage/securityCoverage-domain';
 import { ADMIN_USER, testContext } from '../../utils/testQuery';
 import { addReport, reportDeleteWithElements } from '../../../src/domain/report';
 import type { StoreEntityReport } from '../../../src/types/store';
-import { storeLoadById } from '../../../src/database/middleware-loader';
-import { ENTITY_TYPE_SECURITY_COVERAGE_RESULT } from '../../../src/modules/securityCoverage/securityCoverageResult/securityCoverageResult-types';
+import { listSecurityCoverageResultsByResultOf } from '../../../src/modules/securityCoverage/securityCoverageResult/securityCoverageResult-domain';
 
 describe('SecurityCoverage domain', () => {
   let report: StoreEntityReport;
@@ -37,10 +36,8 @@ describe('SecurityCoverage domain', () => {
         external_uri: 'http://localhost/admin/scenarios/a2166709-be41-48bf-9ce1-51bb2fd3a131',
       };
       const securityCoverage = await addSecurityCoverage(testContext, ADMIN_USER, input);
-      const result = await findSecurityCoverageById(testContext, ADMIN_USER, securityCoverage.id);
-      console.log(result);
-      expect(result['result-of']).toBeDefined();
-      expect(result['result-of']?.length).toEqual(1);
+      const results = await listSecurityCoverageResultsByResultOf(testContext, ADMIN_USER, securityCoverage.id);
+      expect(results.length).toEqual(1);
       await securityCoverageDelete(testContext, ADMIN_USER, securityCoverage.id);
     });
 
@@ -50,9 +47,8 @@ describe('SecurityCoverage domain', () => {
         external_uri: 'http://localhost/admin/scenarios/a2166709-be41-48bf-9ce1-51bb2fd3a131',
       };
       const securityCoverage = await addSecurityCoverage(testContext, ADMIN_USER, input);
-      const result = await findSecurityCoverageById(testContext, ADMIN_USER, securityCoverage.id);
-      expect(result['result-of']).toBeDefined();
-      expect(result['result-of']?.length).toEqual(1);
+      const results = await listSecurityCoverageResultsByResultOf(testContext, ADMIN_USER, securityCoverage.id);
+      expect(results.length).toEqual(1);
       await securityCoverageDelete(testContext, ADMIN_USER, securityCoverage.id);
     });
 
@@ -61,8 +57,8 @@ describe('SecurityCoverage domain', () => {
         ...BASE_INPUT(),
       };
       const securityCoverage = await addSecurityCoverage(testContext, ADMIN_USER, input);
-      const result = await findSecurityCoverageById(testContext, ADMIN_USER, securityCoverage.id);
-      expect(result['result-of']).toBeUndefined();
+      const results = await listSecurityCoverageResultsByResultOf(testContext, ADMIN_USER, securityCoverage.id);
+      expect(results.length).toEqual(0);
       await securityCoverageDelete(testContext, ADMIN_USER, securityCoverage.id);
     });
   });
@@ -77,22 +73,11 @@ describe('SecurityCoverage domain', () => {
         }],
       };
       const securityCoverage = await addSecurityCoverage(testContext, ADMIN_USER, input);
-      const securityCoverageResultId = securityCoverage['result-of']?.[0] ?? '';
-      let securityCoverageResult = await storeLoadById(
-        testContext,
-        ADMIN_USER,
-        securityCoverageResultId,
-        ENTITY_TYPE_SECURITY_COVERAGE_RESULT,
-      );
-      expect(securityCoverageResult).toBeDefined();
+      let results = await listSecurityCoverageResultsByResultOf(testContext, ADMIN_USER, securityCoverage.id);
+      expect(results.length).toEqual(1);
       await securityCoverageDelete(testContext, ADMIN_USER, securityCoverage.id);
-      securityCoverageResult = await storeLoadById(
-        testContext,
-        ADMIN_USER,
-        securityCoverageResultId,
-        ENTITY_TYPE_SECURITY_COVERAGE_RESULT,
-      );
-      expect(securityCoverageResult).toBeUndefined();
+      results = await listSecurityCoverageResultsByResultOf(testContext, ADMIN_USER, securityCoverage.id);
+      expect(results.length).toEqual(0);
     });
   });
 });
