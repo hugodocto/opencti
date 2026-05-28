@@ -13138,7 +13138,7 @@ __metadata:
     recharts: "npm:3.8.1"
     relay-compiler: "npm:20.1.1"
     relay-runtime: "npm:20.1.1"
-    relay-test-utils: "npm:20.1.1"
+    relay-test-utils: "npm:21.0.0"
     remark-flexible-markers: "npm:1.3.4"
     remark-gfm: "npm:4.0.1"
     remark-parse: "npm:11.0.0"
@@ -14819,15 +14819,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"relay-test-utils@npm:20.1.1":
-  version: 20.1.1
-  resolution: "relay-test-utils@npm:20.1.1"
+"relay-runtime@npm:21.0.0":
+  version: 21.0.0
+  resolution: "relay-runtime@npm:21.0.0"
   dependencies:
     "@babel/runtime": "npm:^7.25.0"
     fbjs: "npm:^3.0.2"
     invariant: "npm:^2.2.4"
-    relay-runtime: "npm:20.1.1"
-  checksum: 10c0/0784d3a3169d579ed89e289e6d027b8a4ebe39b06a7b21316cbd305ed430be3dd6d7a9f2c73f814b2df25e3aecd6a3461dd2b8d4bd8a6a632a22b198ef59c9a9
+  checksum: 10c0/b002d723bf5f2a971ec38056fe3e3555693ac1e2f65c45c2677c85261f0a2b80fca98faee0050bf0e308867998fee7202707746c0da4a258a810065c1ffc3f59
+  languageName: node
+  linkType: hard
+
+"relay-test-utils@npm:21.0.0":
+  version: 21.0.0
+  resolution: "relay-test-utils@npm:21.0.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.25.0"
+    fbjs: "npm:^3.0.2"
+    invariant: "npm:^2.2.4"
+    relay-runtime: "npm:21.0.0"
+  checksum: 10c0/a1bfd625830acfeb47ff8b2f577a73d7242decab56f910cdf95dd7d8b26ecd990cbfa3ce7f0660f981e2cbad43033c7ddf52aa713c5b091852da5553a28def83
   languageName: node
   linkType: hard
 
